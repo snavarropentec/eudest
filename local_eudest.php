@@ -757,7 +757,23 @@ class local_eudest {
 
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
-            $sql = "SELECT u.*
+            $type = strpos($CFG->dbtype, 'pgsql');
+            if ($type || $type === 0) {
+                $sql = "SELECT u.*
+                      FROM {local_eudest_masters} u,
+                           (SELECT userid,
+                                    extract(
+                                       date_part('month', max(timeaccess)),
+                                       date_part('month', $today)) num_months
+                              FROM {user_lastaccess}
+                             GROUP BY userid
+                            HAVING num_months >= 6) la
+                     WHERE la.userid = u.userid
+                       AND startdate < UNIX_TIMESTAMP()
+                       AND enddate > UNIX_TIMESTAMP()
+                       AND inactivity6 = 0";
+            } else {
+                $sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
                                    TIMESTAMPDIFF(MONTH,
@@ -770,6 +786,7 @@ class local_eudest {
                        AND startdate < UNIX_TIMESTAMP()
                        AND enddate > UNIX_TIMESTAMP()
                        AND inactivity6 = 0";
+            }
             $records = $DB->get_records_sql($sql, array());
             foreach ($records as $record) {
                 $rm = $this->eude_get_rm($record->categoryid);
@@ -1008,11 +1025,17 @@ class local_eudest {
         $msginac24subject = new lang_string('inac24_subject', $this->pluginname);
 
         $from = $this->get_admin();
-
-        $sql = "SELECT *
-                  FROM {local_eudest_msgs}
-                 WHERE sended = 0
-                   AND msgdate = UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d'))";
+        if ($type || $type === 0) {
+            $sql = "SELECT *
+                      FROM {local_eudest_msgs}
+                     WHERE sended = 0
+                       AND msgdate = to_char(to_timestamp(u.timestart),'YY-MM-DD')";
+        } else {
+            $sql = "SELECT *
+                      FROM {local_eudest_msgs}
+                     WHERE sended = 0
+                       AND msgdate = UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d'))";
+        }
         $records = $DB->get_records_sql($sql, array());
         foreach ($records as $record) {
 
