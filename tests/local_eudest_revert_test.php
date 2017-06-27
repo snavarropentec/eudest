@@ -113,7 +113,7 @@ class local_eudest_revert_testcase extends advanced_testcase {
         $event1->userid = $user1->id;
 
         $DB->insert_record('event', $event1);
-        
+
         // Create events for user2.
         $event2 = new stdClass();
         $event2->name = '[[COURSE]]E2';

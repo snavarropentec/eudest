@@ -1409,7 +1409,7 @@ class local_eudest_testcase extends advanced_testcase {
                       WHERE gi.itemtype = 'course'";
         $grades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(4, $grades);
-        
+
         // Test data of 'local_eudest_enrols' table.
         $enrols = $DB->get_records('local_eudest_enrols', array());
         $this->assertEquals(1, $enrols[$identif + 1]->pend_convalidation);
