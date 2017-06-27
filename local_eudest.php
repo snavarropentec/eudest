@@ -754,17 +754,15 @@ class local_eudest {
         $noticermoninactivity18 = $CFG->local_eudest_inac18notice;
         $noticermoninactivity24 = $CFG->local_eudest_inac24notice;
         $lockuseroninactivity24 = $noticeuseroninactivity24 = $noticermoninactivity24;
+        $type = strpos($CFG->dbtype, 'pgsql');
 
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
-            $type = strpos($CFG->dbtype, 'pgsql');
             if ($type || $type === 0) {
                 $sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
-                                    extract(
-                                       date_part('month', max(timeaccess)),
-                                       date_part('month', $today)) num_months
+                                    extract(MONTH FROM TIMESTAMP max(timeaccess)) num_months
                               FROM {user_lastaccess}
                              GROUP BY userid
                             HAVING num_months >= 6) la
@@ -800,18 +798,31 @@ class local_eudest {
         }
 
         // Get users inactives for 18 months after finish the master.
-        $sql = "SELECT u.*, la.num_months
-                  FROM {local_eudest_masters} u,
-                       (SELECT userid,
-                               TIMESTAMPDIFF(MONTH,
-                                             FROM_UNIXTIME(max(timeaccess),'%Y-%m-%d'),
-                                             FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d')) num_months
-                          FROM {user_lastaccess}
-                         GROUP BY userid
-                        HAVING num_months >= 18) la
-                 WHERE la.userid = u.userid
-		   AND UNIX_TIMESTAMP(TIMESTAMPADD(MONTH,18,FROM_UNIXTIME( enddate ))) < UNIX_TIMESTAMP()
-                   AND inactivity18 = 0;";
+        if ($type || $type === 0) {
+                $sql = "SELECT u.*
+                      FROM {local_eudest_masters} u,
+                           (SELECT userid,
+                                    extract(MONTH FROM TIMESTAMP max(timeaccess)) num_months
+                              FROM {user_lastaccess}
+                             GROUP BY userid
+                            HAVING num_months >= 18) la
+                     WHERE la.userid = u.userid
+                           AND UNIX_TIMESTAMP(TIMESTAMPADD(MONTH,18,FROM_UNIXTIME( enddate ))) < UNIX_TIMESTAMP()
+                           AND inactivity18 = 0;";
+            } else {
+                $sql = "SELECT u.*, la.num_months
+                          FROM {local_eudest_masters} u,
+                               (SELECT userid,
+                                       TIMESTAMPDIFF(MONTH,
+                                                     FROM_UNIXTIME(max(timeaccess),'%Y-%m-%d'),
+                                                     FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d')) num_months
+                                  FROM {user_lastaccess}
+                                 GROUP BY userid
+                                HAVING num_months >= 18) la
+                         WHERE la.userid = u.userid
+                           AND UNIX_TIMESTAMP(TIMESTAMPADD(MONTH,18,FROM_UNIXTIME( enddate ))) < UNIX_TIMESTAMP()
+                           AND inactivity18 = 0;";
+            }
         $records = $DB->get_records_sql($sql, array());
         foreach ($records as $record) {
             $inactivitytime = $record->num_months;
@@ -1025,6 +1036,7 @@ class local_eudest {
         $msginac24subject = new lang_string('inac24_subject', $this->pluginname);
 
         $from = $this->get_admin();
+        $type = strpos($CFG->dbtype, 'pgsql');
         if ($type || $type === 0) {
             $sql = "SELECT *
                       FROM {local_eudest_msgs}
