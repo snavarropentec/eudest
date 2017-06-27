@@ -1409,42 +1409,33 @@ class local_eudest_testcase extends advanced_testcase {
                       WHERE gi.itemtype = 'course'";
         $grades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(4, $grades);
-
+        
         // Test data of 'local_eudest_enrols' table.
         $enrols = $DB->get_records('local_eudest_enrols', array());
         $this->assertEquals(1, $enrols[$identif + 1]->pend_convalidation);
         $this->assertEquals(1, $enrols[$identif + 2]->pend_convalidation);
         $this->assertEquals(1, $enrols[$identif + 4]->pend_convalidation);
 
-        // Testing the function with the initial settings.
+        // Testing the function when convalidation is not allowed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
 
-        $sqlothergrade = "SELECT gg.id, gg.itemid, gi.courseid, c.shortname, gg.userid, gi.grademax, gg.finalgrade
-                          FROM {grade_items} gi
-                          JOIN {grade_grades} gg on gg.itemid = gi.id
-                          JOIN {course} c on gi.courseid = c.id
-                         WHERE gi.itemtype = 'course'";
-        $othergrades = $DB->get_records_sql($sqlothergrade, array());
+        $othergrades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(4, $othergrades);
 
          // Setting the initial CFG parameter to allow convalidations.
         $CFG->local_eudest_convalidations = 1;
 
-        // Testing the function with the initial settings changed.
+        // Testing the function when convalidation is allowed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
 
         // Test data of 'local_eudest_enrols' table.
         $expected = $DB->get_records('local_eudest_enrols');
+
         $this->assertEquals(0, $expected[$identif + 1]->pend_convalidation);
         $this->assertEquals(0, $expected[$identif + 2]->pend_convalidation);
         $this->assertEquals(0, $expected[$identif + 4]->pend_convalidation);
 
-        $sqlnewgrade = "SELECT gg.id, gg.itemid, gi.courseid, c.shortname, gg.userid, gi.grademax, gg.finalgrade
-                          FROM {grade_items} gi
-                          JOIN {grade_grades} gg on gg.itemid = gi.id
-                          JOIN {course} c on gi.courseid = c.id
-                         WHERE gi.itemtype = 'course'";
-        $newgrades = $DB->get_records_sql($sqlnewgrade, array());
+        $newgrades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(7, $newgrades);
     }
 
@@ -1915,13 +1906,13 @@ class local_eudest_testcase extends advanced_testcase {
 
         // Test Sended messages before use the function.
         $messages4 = $DB->get_records('local_eudest_msgs', array());
-        $this->assertCount(8, $messages4);
+        $this->assertCount(7, $messages4);
 
         $this->invoke_method($instance1, 'eude_send_scheduled_messages', array());
 
-        // Test Sended messages before use the function.
+        // Test Sended messages after use the function.
         $messages5 = $DB->get_records('local_eudest_msgs', array());
-        $this->assertCount(1, $messages5);
+        $this->assertCount(0, $messages5);
 
     }
 

@@ -65,21 +65,20 @@ class local_eudest_revert {
      * @param string $username Username of the user
      * @return boolean True if all ok
      */
-    public function eude_revert($categoryid, $timestart, $username) {
+    public function eude_revert($categoryid, $timestart, $username = false) {
         global $DB;
 
         // Get id user.
         if ($username) {
             $userid = $this->eude_revert_find_user($username);
             if ($userid == 0) {
-                debugging(new lang_string('user_not_found', $this->pluginname).": " . $username, DEBUG_DEVELOPER);
                 return false;
             }
             $this->eude_revert_user($categoryid, $userid, $timestart);
             return true;
         }
 
-        $sql = "SELECT ue.userid
+        $sql = "SELECT ue.id, ue.userid
                   FROM {user_enrolments} ue
                   JOIN {role_assignments} ra ON ra.userid = ue.userid
                   JOIN {context} ct ON ra.contextid = ct.id
@@ -92,13 +91,11 @@ class local_eudest_revert {
               ORDER BY ue.id ASC";
         $records = $DB->get_records_sql($sql, array('categoryid' => $categoryid, 'timestart' => $timestart));
         if (!$records) {
-            debugging(new lang_string('no_users_in_category', $this->pluginname), DEBUG_DEVELOPER);
             return false;
         }
         foreach ($records as $record) {
             $this->eude_revert_user($categoryid, $record->userid, $timestart);
         }
-        debugging(new lang_string('data_rollback_ok', $this->pluginname), DEBUG_DEVELOPER);
         return true;
     }
 
@@ -109,7 +106,7 @@ class local_eudest_revert {
      * @param int $timestart Time start to find the records
      */
     private function eude_revert_user($categoryid, $userid, $timestart) {
-
+        global $DB;
         // Delete events of user master.
         $this->eude_revert_delete_events($userid, $timestart, "[[COURSE]]");
 
@@ -119,7 +116,6 @@ class local_eudest_revert {
         // Update data and mark for processing.
         $this->eude_revert_recalculate_data($categoryid, $userid);
 
-        debugging(new lang_string('user_rollback_ok', $this->pluginname).": " . $userid, DEBUG_DEVELOPER);
     }
 
     /**

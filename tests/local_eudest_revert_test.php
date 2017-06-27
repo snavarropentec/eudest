@@ -75,7 +75,7 @@ class local_eudest_revert_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user1->id, $course2->id, $studentrole->id, 'manual', $timestart);
         $this->getDataGenerator()->enrol_user($user1->id, $course3->id, $studentrole->id, 'manual', $timestart);
 
-        // Saving enrol data in eudes_enrols.
+        // Saving enrol data in eudest_enrols.
         $record1 = new stdClass();
         $record1->userid = $user1->id;
         $record1->courseid = $course1->id;
@@ -113,6 +113,17 @@ class local_eudest_revert_testcase extends advanced_testcase {
         $event1->userid = $user1->id;
 
         $DB->insert_record('event', $event1);
+        
+        // Create events for user2.
+        $event2 = new stdClass();
+        $event2->name = '[[COURSE]]E2';
+        $event2->description = 'E2 desc';
+        $event2->timestart = $timestart + 10000;
+        $event2->timeduration = 100000;
+        $event2->eventtype = 'user';
+        $event2->userid = $user2->id;
+
+        $DB->insert_record('event', $event2);
 
         // Create msgs for user1.
         $msg1 = new stdClass();
@@ -153,7 +164,7 @@ class local_eudest_revert_testcase extends advanced_testcase {
         $msgcat1 = $DB->get_records('local_eudest_msgs', array('categoryid' => $cat1->id));
         $this->assertCount(1, $msgcat1);
         $updatedeudesenrolscat1 = $DB->get_records('local_eudest_enrols',
-                array('userid' => $user1->id, 'categoryid' => $cat1->id, 'pend_event' => 1, 'pend_encapsulation' => 1));
+                array('userid' => $user1->id, 'categoryid' => $cat1->id, 'pend_event' => 1));
         $this->assertCount(2, $updatedeudesenrolscat1);
         // Testing the function with cat1 (Expected result: return true).
         $result = $instance1->eude_revert($cat1->id, $timestart);

@@ -23,6 +23,8 @@
  */
 namespace local_eudest\task;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Simple task to run the EUDE cron.
  *

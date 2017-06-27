@@ -944,10 +944,10 @@ class local_eudest {
             return 0;
         }
 
-        $sql = "SELECT CONCAT(e.id, '_', gi.id, '_', gg.id) as uniquefield, e.*, gi.id itemid, gg.finalgrade
+        $sql = "SELECT distinct(gi.id) uniqueid, e.*, gi.id itemid, gg.finalgrade
                   FROM {local_eudest_enrols} e
-             LEFT JOIN {grade_items} gi on e.courseid = gi.courseid and itemtype='course'
-             LEFT JOIN {grade_grades} gg on gg.itemid = gi.id
+                  LEFT JOIN {grade_items} gi on e.courseid = gi.courseid and itemtype='course'
+                  LEFT JOIN {grade_grades} gg on gg.itemid = gi.id
                  WHERE e.pend_convalidation = 1
                    AND e.intensive = 0
               ORDER BY e.userid, e.startdate ASC";
@@ -1195,18 +1195,18 @@ class local_eudest {
     }
 
     /**
-     * Send a private message and an email.
+     * Send a private message.
      * @param int $from Id of the user from
      * @param int $to Id of the target user
      * @param string $subject Title of the message
      * @param string $messagetext Body of the message
      */
-    private function send_message($from, $to, $messagetext) {
+    private function send_message($from, $to, $subject, $messagetext) {
         global $PAGE;
 
         $PAGE->set_context(context_system::instance());
-
-        message_post_message($from, $to, $messagetext, FORMAT_PLAIN);
+        $message = $subject . ': ' . $messagetext;
+        message_post_message($from, $to, $message, FORMAT_PLAIN);
 
     }
 }
