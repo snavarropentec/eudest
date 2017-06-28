@@ -765,16 +765,18 @@ class local_eudest {
                                 WHERE timeaccess < $sixmonths
                                 GROUP BY userid";
                 $recordusers = $DB->get_records_sql($sqlusers, array());
-                
+                $records = array();
                 foreach ($recordusers as $useract) {
-                    if($useract->lastaccess > $sixmonths) {
+                    if ($useract->lastaccess > $sixmonths) {
                         $sql = "SELECT u.*
                           FROM {local_eudest_masters}
                          WHERE userid = $useract->userid
                            AND startdate < current_timestamp
                            AND enddate > current_timestamp)
                            AND inactivity6 = 0";
+                        $new = $DB->get_records_sql($sql, array());
                     }
+                    $records = array_push($new);
                 }
                 /*$sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
@@ -803,8 +805,9 @@ class local_eudest {
                        AND startdate < UNIX_TIMESTAMP()
                        AND enddate > UNIX_TIMESTAMP()
                        AND inactivity6 = 0";
+                $records = $DB->get_records_sql($sql, array());
             }
-            $records = $DB->get_records_sql($sql, array());
+            
             foreach ($records as $record) {
                 $rm = $this->eude_get_rm($record->categoryid);
                 // Add message to stack.
