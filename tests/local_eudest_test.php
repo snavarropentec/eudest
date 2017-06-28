@@ -1803,10 +1803,11 @@ class local_eudest_testcase extends advanced_testcase {
         $CFG->wwwroot = 'http://192.168.1.26/moodle30';
 
         //$todaytime = time();
-
+        $today = date('Y-m-d', time());
+        /*
         $todaysql = "SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d')) AS date";
         $today = $DB->get_record_sql($todaysql, array());
-
+*/
         $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
 
         // Create users, category and category context.
