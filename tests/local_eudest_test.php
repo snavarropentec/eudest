@@ -1801,13 +1801,17 @@ class local_eudest_testcase extends advanced_testcase {
         $CFG->local_eudest_inac24rmtext = 'Inactive 24 months Responsable Master Text';
         $CFG->local_eudest_inac24sttext = 'Inactive 24 months Student Text';
         $CFG->wwwroot = 'http://192.168.1.26/moodle30';
+        
 
-        //$todaytime = time();
-        $today = date('s-m-d', time());
-        /*
-        $todaysql = "SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d')) AS date";
-        $today = $DB->get_record_sql($todaysql, array());
-*/
+        $type = strpos($CFG->dbtype, 'pgsql');
+        if ($type || $type === 0) {
+            $today = date('y-m-d', time());
+        } else {
+            $todaysql = "SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d')) AS date";
+            $todayresult = $DB->get_record_sql($todaysql, array());
+            $today = $todayresult->date;
+        }
+
         $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
 
         // Create users, category and category context.
