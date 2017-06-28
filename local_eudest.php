@@ -755,20 +755,27 @@ class local_eudest {
         $noticermoninactivity24 = $CFG->local_eudest_inac24notice;
         $lockuseroninactivity24 = $noticeuseroninactivity24 = $noticermoninactivity24;
         $type = strpos($CFG->dbtype, 'pgsql');
-
+        $datetoday = date_create();
+        $todaydate = date_format($datetoday, 'Y-m-d');
+        $sql = "SELECT max(timeaccess)
+                      FROM {user_lastaccess}"
+        $dateaccess = $DB->get_record_sql($sql, array());
+        $accessdate = date_format($datetoday, 'Y-m-d');
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
             if ($type || $type === 0) {
                 $sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
-                                    extract(MONTH FROM TIMESTAMP max(timeaccess)) num_months
+                                    extract(
+                                        MONTH date_part('month',$accessdate) 
+                                              date_part('month',$todaydate)) num_months
                               FROM {user_lastaccess}
                              GROUP BY userid
                             HAVING num_months >= 6) la
                      WHERE la.userid = u.userid
-                       AND startdate < UNIX_TIMESTAMP()
-                       AND enddate > UNIX_TIMESTAMP()
+                       AND startdate < $datetoday
+                       AND enddate > $datetoday
                        AND inactivity6 = 0";
             } else {
                 $sql = "SELECT u.*
@@ -1037,7 +1044,7 @@ class local_eudest {
 
         $from = $this->get_admin();
         $datetoday = date_create();
-        $todaydate = date_format($datetoday, '%Y-%m-%d');
+        $todaydate = date_format($datetoday, 'Y-m-d');
         $type = strpos($CFG->dbtype, 'pgsql');
         if ($type || $type === 0) {
             $sql = "SELECT *
