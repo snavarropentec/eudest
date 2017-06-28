@@ -1801,7 +1801,6 @@ class local_eudest_testcase extends advanced_testcase {
         $CFG->local_eudest_inac24rmtext = 'Inactive 24 months Responsable Master Text';
         $CFG->local_eudest_inac24sttext = 'Inactive 24 months Student Text';
         $CFG->wwwroot = 'http://192.168.1.26/moodle30';
-        
 
         $today = time();
 
@@ -1891,7 +1890,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msg0->msgto = $user1->id;
         $msg0->msgtarget = $user2->id;
         $msg0->msgtype = 'RM_INACTIVITY24';
-        $msg0->msgdate = $today->date;
+        $msg0->msgdate = $today;
         $msg0->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msg0, false);
