@@ -758,7 +758,8 @@ class local_eudest {
         $datetoday = date_create();
         $todaydate = date_format($datetoday, 'Y-m-d');
         $sql = "SELECT max(timeaccess)
-                      FROM {user_lastaccess}"
+                              FROM {user_lastaccess}
+                              WHERE 1";
         $dateaccess = $DB->get_record_sql($sql, array());
         $accessdate = date_format($datetoday, 'Y-m-d');
         // Get users inactives for 6 months.
