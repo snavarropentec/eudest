@@ -1801,8 +1801,9 @@ class local_eudest_testcase extends advanced_testcase {
         $CFG->local_eudest_inac24rmtext = 'Inactive 24 months Responsable Master Text';
         $CFG->local_eudest_inac24sttext = 'Inactive 24 months Student Text';
         $CFG->wwwroot = 'http://192.168.1.26/moodle30';
+        
 
-        $today->date = date_create(time());
+        $today = time();
 
         /*$todaysql = "SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d')) AS date";
         $today = $DB->get_record_sql($todaysql, array());*/
@@ -1835,7 +1836,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msg5->msgto = $user1->id;
         $msg5->msgtarget = $user2->id;
         $msg5->msgtype = 'NEW_STUDENT';
-        $msg5->msgdate = $today->date;
+        $msg5->msgdate = $today;
         $msg5->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msg5, false);
@@ -1846,7 +1847,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msg6->msgto = $user1->id;
         $msg6->msgtarget = $user2->id;
         $msg6->msgtype = 'ST_FINISH_MASTER';
-        $msg6->msgdate = $today->date;
+        $msg6->msgdate = $today;
         $msg6->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msg6, false);
@@ -1857,7 +1858,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msg7->msgto = $user1->id;
         $msg7->msgtarget = $user2->id;
         $msg7->msgtype = 'RM_FINISH_MASTER';
-        $msg7->msgdate = $today->date;
+        $msg7->msgdate = $today;
         $msg7->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msg7, false);
@@ -1868,7 +1869,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msg8->msgto = $user1->id;
         $msg8->msgtarget = $user2->id;
         $msg8->msgtype = 'RM_INACTIVITY6';
-        $msg8->msgdate = $today->date;
+        $msg8->msgdate = $today;
         $msg8->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msg8, false);
@@ -1879,7 +1880,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msg9->msgto = $user1->id;
         $msg9->msgtarget = $user2->id;
         $msg9->msgtype = 'RM_INACTIVITY18';
-        $msg9->msgdate = $today->date;
+        $msg9->msgdate = $today;
         $msg9->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msg9, false);
@@ -1901,7 +1902,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msga->msgto = $user1->id;
         $msga->msgtarget = $user2->id;
         $msga->msgtype = 'USER_LOCKED';
-        $msga->msgdate = $today->date;
+        $msga->msgdate = $today;
         $msga->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msga, false);
