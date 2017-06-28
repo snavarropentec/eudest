@@ -755,7 +755,7 @@ class local_eudest {
         $noticermoninactivity24 = $CFG->local_eudest_inac24notice;
         $lockuseroninactivity24 = $noticeuseroninactivity24 = $noticermoninactivity24;
         $type = strpos($CFG->dbtype, 'pgsql');
-        $datetoday = date_create();
+        $datetoday = date_create(time());
         $todaydate = date_format($datetoday, 'Y-m-d');
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
@@ -763,9 +763,7 @@ class local_eudest {
                 $sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
-                                    extract(
-                                        MONTH date_part('month',max(timeaccess)) 
-                                              date_part('month',$todaydate)) num_months
+                                    date_part('month',max(timeaccess)) - date_part('month',$todaydate)) num_months
                               FROM {user_lastaccess}
                              GROUP BY userid
                             HAVING num_months >= 6) la
@@ -1039,7 +1037,7 @@ class local_eudest {
         $msginac24subject = new lang_string('inac24_subject', $this->pluginname);
 
         $from = $this->get_admin();
-        $datetoday = date_create();
+        $datetoday = date_create(time());
         $todaydate = date_format($datetoday, 'Y-m-d');
         $sql = "SELECT *
                       FROM {local_eudest_msgs}

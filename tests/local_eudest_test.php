@@ -1802,7 +1802,7 @@ class local_eudest_testcase extends advanced_testcase {
         $CFG->local_eudest_inac24sttext = 'Inactive 24 months Student Text';
         $CFG->wwwroot = 'http://192.168.1.26/moodle30';
         
-        $datetoday = date_create();
+        $datetoday = date_create(time());
         $today->date = date_format($datetoday, 'Y-m-d');
         /*$todaysql = "SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d')) AS date";
         $today = $DB->get_record_sql($todaysql, array());*/
