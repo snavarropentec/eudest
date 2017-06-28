@@ -760,14 +760,8 @@ class local_eudest {
         if ($noticermoninactivity6) {
             if ($type || $type === 0) {
                 $sql = "SELECT u.*
-                      FROM {local_eudest_masters} u,
-                           (SELECT userid,
-                                    DATEDIFF(month, max(timeaccess), now())) num_months
-                              FROM {user_lastaccess}
-                             GROUP BY userid
-                            HAVING num_months >= 6) la
-                     WHERE la.userid = u.userid
-                       AND startdate < now()
+                      FROM {local_eudest_masters} u
+                     WHERE startdate < now()
                        AND enddate > now()
                        AND inactivity6 = 0";
             } else {

@@ -1805,11 +1805,11 @@ class local_eudest_testcase extends advanced_testcase {
 
         $type = strpos($CFG->dbtype, 'pgsql');
         if ($type || $type === 0) {
-            $today = date('y-m-d', time());
+            $todaysql = "SELECT now() AS date";
+            $today = $DB->get_record_sql($todaysql, array());
         } else {
             $todaysql = "SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d')) AS date";
-            $todayresult = $DB->get_record_sql($todaysql, array());
-            $today = $todayresult->date;
+            $today = $DB->get_record_sql($todaysql, array());
         }
 
         $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
@@ -1840,7 +1840,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msg5->msgto = $user1->id;
         $msg5->msgtarget = $user2->id;
         $msg5->msgtype = 'NEW_STUDENT';
-        $msg5->msgdate = $today;
+        $msg5->msgdate = $today->date;
         $msg5->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msg5, false);
@@ -1851,7 +1851,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msg6->msgto = $user1->id;
         $msg6->msgtarget = $user2->id;
         $msg6->msgtype = 'ST_FINISH_MASTER';
-        $msg6->msgdate = $today;
+        $msg6->msgdate = $today->date;
         $msg6->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msg6, false);
@@ -1862,7 +1862,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msg7->msgto = $user1->id;
         $msg7->msgtarget = $user2->id;
         $msg7->msgtype = 'RM_FINISH_MASTER';
-        $msg7->msgdate = $today;
+        $msg7->msgdate = $today->date;
         $msg7->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msg7, false);
@@ -1873,7 +1873,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msg8->msgto = $user1->id;
         $msg8->msgtarget = $user2->id;
         $msg8->msgtype = 'RM_INACTIVITY6';
-        $msg8->msgdate = $today;
+        $msg8->msgdate = $today->date;
         $msg8->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msg8, false);
@@ -1884,7 +1884,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msg9->msgto = $user1->id;
         $msg9->msgtarget = $user2->id;
         $msg9->msgtype = 'RM_INACTIVITY18';
-        $msg9->msgdate = $today;
+        $msg9->msgdate = $today->date;
         $msg9->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msg9, false);
@@ -1895,7 +1895,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msg0->msgto = $user1->id;
         $msg0->msgtarget = $user2->id;
         $msg0->msgtype = 'RM_INACTIVITY24';
-        $msg0->msgdate = $today;
+        $msg0->msgdate = $today->date;
         $msg0->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msg0, false);
@@ -1906,7 +1906,7 @@ class local_eudest_testcase extends advanced_testcase {
         $msga->msgto = $user1->id;
         $msga->msgtarget = $user2->id;
         $msga->msgtype = 'USER_LOCKED';
-        $msga->msgdate = $today;
+        $msga->msgdate = $today->date;
         $msga->sended = 0;
 
         $DB->insert_record('local_eudest_msgs', $msga, false);
