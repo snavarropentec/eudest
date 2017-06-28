@@ -760,8 +760,11 @@ class local_eudest {
         if ($noticermoninactivity6) {
             if ($type || $type === 0) {
                 $sixmonths = 183*86400;
-                $sqlusers = "SELECT userid FROM {user_lastaccess} WHERE max(timeaccess) < $sixmonths GROUP BY userid";
-                $recordusers = $DB->get_records_sql($sql, array());
+                $sqlusers = "SELECT userid
+                                FROM {user_lastaccess}
+                                WHERE max(timeaccess) < $sixmonths
+                                GROUP BY userid";
+                $recordusers = $DB->get_records_sql($sqlusers, array());
                 foreach ($recordusers as $useract) {
                     $sql = "SELECT u.*
                       FROM {local_eudest_masters}
