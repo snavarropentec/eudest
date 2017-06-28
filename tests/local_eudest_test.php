@@ -1802,7 +1802,7 @@ class local_eudest_testcase extends advanced_testcase {
         $CFG->local_eudest_inac24sttext = 'Inactive 24 months Student Text';
         $CFG->wwwroot = 'http://192.168.1.26/moodle30';
 
-        $today = now();
+        $today = time();
         $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
 
         // Create users, category and category context.

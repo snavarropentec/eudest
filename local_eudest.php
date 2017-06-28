@@ -821,6 +821,25 @@ class local_eudest {
 
         // Get users inactives for 18 months after finish the master.
         if ($type || $type === 0) {
+            $moremonths = 549 * 86400;
+                $sqlusers = "SELECT userid, max(timeaccess) as lastaccess
+                                FROM {user_lastaccess}
+                                WHERE timeaccess < $moremonths
+                                GROUP BY userid";
+                $recordusers = $DB->get_records_sql($sqlusers, array());
+                $records = array();
+                foreach ($recordusers as $useract) {
+                    if ($useract->lastaccess > $moremonths) {
+                        $sql = "SELECT u.*
+                          FROM {local_eudest_masters}
+                         WHERE userid = $useract->userid
+                           AND startdate < current_timestamp
+                           AND enddate > current_timestamp)
+                           AND inactivity18 = 0";
+                        $new = $DB->get_records_sql($sql, array());
+                    }
+                    $records = array_push($new);
+                }/*
                 $sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
@@ -832,7 +851,7 @@ class local_eudest {
                             HAVING num_months >= 18) la
                      WHERE la.userid = u.userid
                            AND UNIX_TIMESTAMP(TIMESTAMPADD(MONTH,18,FROM_UNIXTIME( enddate ))) < UNIX_TIMESTAMP()
-                           AND inactivity18 = 0;";
+                           AND inactivity18 = 0;";*/
         } else {
                 $sql = "SELECT u.*, la.num_months
                           FROM {local_eudest_masters} u,
@@ -846,8 +865,9 @@ class local_eudest {
                          WHERE la.userid = u.userid
                            AND UNIX_TIMESTAMP(TIMESTAMPADD(MONTH,18,FROM_UNIXTIME( enddate ))) < UNIX_TIMESTAMP()
                            AND inactivity18 = 0;";
+                $records = $DB->get_records_sql($sql, array());
         }
-        $records = $DB->get_records_sql($sql, array());
+        
         foreach ($records as $record) {
             $inactivitytime = $record->num_months;
             $inactive18 = $inactive24 = 0;
