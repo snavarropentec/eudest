@@ -759,11 +759,22 @@ class local_eudest {
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
             if ($type || $type === 0) {
-                $sql = "SELECT u.*
+                $sixmonths = 183*86400;
+                $sqlusers = "SELECT userid FROM {user_lastaccess} WHERE max(timeaccess) < $sixmonths GROUP BY userid";
+                $recordusers = $DB->get_records_sql($sql, array());
+                foreach ($recordusers as $useract) {
+                    $sql = "SELECT u.*
+                      FROM {local_eudest_masters}
+                     WHERE userid = $useract
+                       AND startdate < current_timestamp
+                       AND enddate > current_timestamp)
+                       AND inactivity6 = 0";
+                }
+                /*$sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
-                                    DATEDIFF(month, 
-                                        to_char(max(timeaccess), 'MM'), 
+                                    DATEDIFF(month,
+                                        to_char(max(timeaccess), 'MM'),
                                         to_char(current_timestamp, 'MM'))) num_months
                               FROM {user_lastaccess}
                              GROUP BY userid
@@ -771,7 +782,7 @@ class local_eudest {
                      WHERE la.userid = u.userid
                        AND startdate < current_timestamp
                        AND enddate > current_timestamp)
-                       AND inactivity6 = 0";
+                       AND inactivity6 = 0";*/
             } else {
                 $sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
@@ -804,8 +815,8 @@ class local_eudest {
                 $sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
-                                    DATEDIFF(month, 
-                                        to_char(max(timeaccess), 'MM'), 
+                                    DATEDIFF(month,
+                                        to_char(max(timeaccess), 'MM'),
                                         to_char(current_timestamp, 'MM'))) num_months
                               FROM {user_lastaccess}
                              GROUP BY userid
