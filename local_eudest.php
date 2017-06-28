@@ -809,7 +809,7 @@ class local_eudest {
                      WHERE la.userid = u.userid
                            AND UNIX_TIMESTAMP(TIMESTAMPADD(MONTH,18,FROM_UNIXTIME( enddate ))) < UNIX_TIMESTAMP()
                            AND inactivity18 = 0;";
-            } else {
+        } else {
                 $sql = "SELECT u.*, la.num_months
                           FROM {local_eudest_masters} u,
                                (SELECT userid,
@@ -822,7 +822,7 @@ class local_eudest {
                          WHERE la.userid = u.userid
                            AND UNIX_TIMESTAMP(TIMESTAMPADD(MONTH,18,FROM_UNIXTIME( enddate ))) < UNIX_TIMESTAMP()
                            AND inactivity18 = 0;";
-            }
+        }
         $records = $DB->get_records_sql($sql, array());
         foreach ($records as $record) {
             $inactivitytime = $record->num_months;
@@ -1036,17 +1036,23 @@ class local_eudest {
         $msginac24subject = new lang_string('inac24_subject', $this->pluginname);
 
         $from = $this->get_admin();
+        $datetoday = date_create();
+        $todaydate = date_format($datetoday, '%Y-%m-%d');
         $type = strpos($CFG->dbtype, 'pgsql');
         if ($type || $type === 0) {
             $sql = "SELECT *
                       FROM {local_eudest_msgs}
                      WHERE sended = 0
-                       AND msgdate = to_char(to_timestamp(u.timestart),'YY-MM-DD')";
+                       AND msgdate = $todaydate";
         } else {
             $sql = "SELECT *
                       FROM {local_eudest_msgs}
                      WHERE sended = 0
-                       AND msgdate = UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d'))";
+                       AND msgdate = $todaydate";
+            /*$sql = "SELECT *
+                      FROM {local_eudest_msgs}
+                     WHERE sended = 0
+                       AND msgdate = UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d'))";*/
         }
         $records = $DB->get_records_sql($sql, array());
         foreach ($records as $record) {
