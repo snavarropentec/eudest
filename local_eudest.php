@@ -757,11 +757,12 @@ class local_eudest {
         $type = strpos($CFG->dbtype, 'pgsql');
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
+            $today = time();
             if ($type || $type === 0) {
                 $sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
-                                    DATEDIFF(month, max(timeaccess), time())) num_months
+                                    DATEDIFF(month, max(timeaccess), $today)) num_months
                               FROM {user_lastaccess}
                              GROUP BY userid
                             HAVING num_months >= 6) la
