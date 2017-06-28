@@ -757,11 +757,6 @@ class local_eudest {
         $type = strpos($CFG->dbtype, 'pgsql');
         $datetoday = date_create();
         $todaydate = date_format($datetoday, 'Y-m-d');
-        $sql = "SELECT max(timeaccess)
-                              FROM {user_lastaccess}
-                              WHERE 1";
-        $dateaccess = $DB->get_record_sql($sql, array());
-        $accessdate = date_format($datetoday, 'Y-m-d');
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
             if ($type || $type === 0) {
@@ -769,7 +764,7 @@ class local_eudest {
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
                                     extract(
-                                        MONTH date_part('month',$accessdate) 
+                                        MONTH date_part('month',max(timeaccess)) 
                                               date_part('month',$todaydate)) num_months
                               FROM {user_lastaccess}
                              GROUP BY userid
@@ -1046,22 +1041,11 @@ class local_eudest {
         $from = $this->get_admin();
         $datetoday = date_create();
         $todaydate = date_format($datetoday, 'Y-m-d');
-        $type = strpos($CFG->dbtype, 'pgsql');
-        if ($type || $type === 0) {
-            $sql = "SELECT *
+        $sql = "SELECT *
                       FROM {local_eudest_msgs}
                      WHERE sended = 0
                        AND msgdate = $todaydate";
-        } else {
-            $sql = "SELECT *
-                      FROM {local_eudest_msgs}
-                     WHERE sended = 0
-                       AND msgdate = $todaydate";
-            /*$sql = "SELECT *
-                      FROM {local_eudest_msgs}
-                     WHERE sended = 0
-                       AND msgdate = UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d'))";*/
-        }
+    
         $records = $DB->get_records_sql($sql, array());
         foreach ($records as $record) {
 
