@@ -755,8 +755,8 @@ class local_eudest {
         $noticermoninactivity24 = $CFG->local_eudest_inac24notice;
         $lockuseroninactivity24 = $noticeuseroninactivity24 = $noticermoninactivity24;
         $type = strpos($CFG->dbtype, 'pgsql');
-        $datetoday = date_create(time());
-        $todaydate = date_format($datetoday, 'Y-m-d');
+        $datetoday = date_create(time(), 'timestamp');
+        $todaydate = date_create(time(), 'Y-m-d');
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
             if ($type || $type === 0) {
@@ -1037,8 +1037,7 @@ class local_eudest {
         $msginac24subject = new lang_string('inac24_subject', $this->pluginname);
 
         $from = $this->get_admin();
-        $datetoday = date_create(time());
-        $todaydate = date_format($datetoday, 'Y-m-d');
+        $todaydate = date_create(time(), 'Y-m-d');
         $sql = "SELECT *
                       FROM {local_eudest_msgs}
                      WHERE sended = 0
