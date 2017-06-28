@@ -760,9 +760,17 @@ class local_eudest {
         if ($noticermoninactivity6) {
             if ($type || $type === 0) {
                 $sql = "SELECT u.*
-                      FROM {local_eudest_masters} u
-                     WHERE startdate < now()
-                       AND enddate > now()
+                      FROM {local_eudest_masters} u,
+                           (SELECT userid,
+                                    DATEDIFF(month, 
+                                        to_char(max(timeaccess), 'MM'), 
+                                        to_char(current_timestamp, 'MM'))) num_months
+                              FROM {user_lastaccess}
+                             GROUP BY userid
+                            HAVING num_months >= 6) la
+                     WHERE la.userid = u.userid
+                       AND startdate < current_timestamp
+                       AND enddate > current_timestamp)
                        AND inactivity6 = 0";
             } else {
                 $sql = "SELECT u.*
@@ -796,7 +804,9 @@ class local_eudest {
                 $sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
-                                    DATEDIFF(month, max(timeaccess), now()) num_months
+                                    DATEDIFF(month, 
+                                        to_char(max(timeaccess), 'MM'), 
+                                        to_char(current_timestamp, 'MM'))) num_months
                               FROM {user_lastaccess}
                              GROUP BY userid
                             HAVING num_months >= 18) la

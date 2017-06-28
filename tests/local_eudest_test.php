@@ -1805,7 +1805,7 @@ class local_eudest_testcase extends advanced_testcase {
 
         $type = strpos($CFG->dbtype, 'pgsql');
         if ($type || $type === 0) {
-            $todaysql = "SELECT now() AS date";
+            $todaysql = "SELECT to_char(current_timestamp, 'YY-MM-DD') AS date";
             $today = $DB->get_record_sql($todaysql, array());
         } else {
             $todaysql = "SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d')) AS date";
