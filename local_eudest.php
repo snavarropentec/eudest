@@ -759,19 +759,22 @@ class local_eudest {
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
             if ($type || $type === 0) {
-                $sixmonths = 183*86400;
-                $sqlusers = "SELECT userid
+                $sixmonths = 183 * 86400;
+                $sqlusers = "SELECT userid, max(timeaccess) as lastaccess
                                 FROM {user_lastaccess}
-                                WHERE max(timeaccess) < $sixmonths
+                                WHERE timeaccess < $sixmonths
                                 GROUP BY userid";
                 $recordusers = $DB->get_records_sql($sqlusers, array());
+                
                 foreach ($recordusers as $useract) {
-                    $sql = "SELECT u.*
-                      FROM {local_eudest_masters}
-                     WHERE userid = $useract
-                       AND startdate < current_timestamp
-                       AND enddate > current_timestamp)
-                       AND inactivity6 = 0";
+                    if($useract->lastaccess > $sixmonths) {
+                        $sql = "SELECT u.*
+                          FROM {local_eudest_masters}
+                         WHERE userid = $useract->userid
+                           AND startdate < current_timestamp
+                           AND enddate > current_timestamp)
+                           AND inactivity6 = 0";
+                    }
                 }
                 /*$sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
