@@ -755,20 +755,20 @@ class local_eudest {
         $noticermoninactivity24 = $CFG->local_eudest_inac24notice;
         $lockuseroninactivity24 = $noticeuseroninactivity24 = $noticermoninactivity24;
         $type = strpos($CFG->dbtype, 'pgsql');
-        $today = time();
+        //$today = time();
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
             if ($type || $type === 0) {
                 $sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
-                                    DATEDIFF(month, max(timeaccess), $today)) num_months
+                                    DATEDIFF(month, max(timeaccess), now())) num_months
                               FROM {user_lastaccess}
                              GROUP BY userid
                             HAVING num_months >= 6) la
                      WHERE la.userid = u.userid
-                       AND startdate < time()
-                       AND enddate > time()
+                       AND startdate < now()
+                       AND enddate > now()
                        AND inactivity6 = 0";
             } else {
                 $sql = "SELECT u.*
@@ -802,7 +802,7 @@ class local_eudest {
                 $sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
-                                    DATEDIFF(month, max(timeaccess), $today) num_months
+                                    DATEDIFF(month, max(timeaccess), now()) num_months
                               FROM {user_lastaccess}
                              GROUP BY userid
                             HAVING num_months >= 18) la
