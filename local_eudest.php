@@ -761,7 +761,7 @@ class local_eudest {
                 $sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
-                                    date_part('month',max(timeaccess)) - date_part('month',time())) num_months
+                                    DATEDIFF(month, max(timeaccess), time())) num_months
                               FROM {user_lastaccess}
                              GROUP BY userid
                             HAVING num_months >= 6) la
@@ -1035,7 +1035,7 @@ class local_eudest {
         $msginac24subject = new lang_string('inac24_subject', $this->pluginname);
 
         $from = $this->get_admin();
-        $todaydate = date_create(time(), 'Y-m-d');
+        $todaydate = time();
         $sql = "SELECT *
                       FROM {local_eudest_msgs}
                      WHERE sended = 0
