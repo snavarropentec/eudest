@@ -1801,11 +1801,10 @@ class local_eudest_testcase extends advanced_testcase {
         $CFG->local_eudest_inac24rmtext = 'Inactive 24 months Responsable Master Text';
         $CFG->local_eudest_inac24sttext = 'Inactive 24 months Student Text';
         $CFG->wwwroot = 'http://192.168.1.26/moodle30';
-        
 
         $type = strpos($CFG->dbtype, 'pgsql');
         if ($type || $type === 0) {
-            $todaysql = "SELECT EXTRACT(EPOCH FROM TIMESTAMP NOW()) AS date";
+            $todaysql = "select to_timestamp( extract(epoch from now())) AS date";
             $today = $DB->get_record_sql($todaysql, array());
         } else {
             $todaysql = "SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d')) AS date";
