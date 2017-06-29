@@ -762,7 +762,7 @@ class local_eudest {
         $add18months = "UNIX_TIMESTAMP(TIMESTAMPADD(MONTH,18,FROM_UNIXTIME( enddate )))";
         $type = strpos($CFG->dbtype, 'pgsql');
         if ($type || $type === 0) {
-            $bdtimestamp = "to_timestamp(CURRENT_TIMESTAMP)";
+            $bdtimestamp = "to_char(CURRENT_TIMESTAMP)";
             $nummonthsfunction = "(DATE_PART('year', CURRENT_TIMESTAMP) - DATE_PART('year', CURRENT_TIMESTAMP)) * 12 +
                                   (DATE_PART('month', TO_TIMESTAMP(max(timeaccess))) -
                                         DATE_PART('month', TO_TIMESTAMP(max(timeaccess))))";
