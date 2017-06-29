@@ -766,7 +766,7 @@ class local_eudest {
                 $inactive = false;
                 if ($active->startdate < $today &&  $active->enddate > $today) {
                     foreach ($access as $useraccess) {
-                        if ($useraccess->timeaccess < $sixmonths && $useraccess->userid == $active-> userid && $inactive = false) {
+                        if ($useraccess->timeaccess < $sixmonths && $useraccess->userid == $active-> userid && $inactive == false) {
                             $records = array_push($active);
                             $inactive = true;
                             break;
