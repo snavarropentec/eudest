@@ -793,7 +793,7 @@ class local_eudest {
                 $DB->update_record('local_eudest_masters', $record);
             }
         }
-
+        var_dump($records);
         // Get users inactives for 18 months after finish the master.
         $sql = "SELECT u.*, la.num_months
                   FROM {local_eudest_masters} u,
