@@ -758,39 +758,22 @@ class local_eudest {
         $today = time();
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
-            
-                $sixmonths = 183 * 86400;
-                $records = array();
-                $activeusers = get_records('local_eudest_masters', array('inactivity6' => 0));
-                $access = get_records('user_lastaccess', array());
-                foreach ($activeusers as $active) {
-                    $inactive = false;
-                    if ($active->startdate < $today &&  $active->enddate > $today) {
-                        foreach ($access as $useraccess) {
-                            if ($useraccess->timeaccess < $sixmonths && $useraccess->userid == $active-> userid && $inactive = false) {
-                                $records = array_push($active);
-                                $inactive = true;
-                                break;
-                            }
+            $sixmonths = 183 * 86400;
+            $records = array();
+            $activeusers = $DB->get_records('local_eudest_masters', array('inactivity6' => 0));
+            $access = $DB->get_records('user_lastaccess', array());
+            foreach ($activeusers as $active) {
+                $inactive = false;
+                if ($active->startdate < $today &&  $active->enddate > $today) {
+                    foreach ($access as $useraccess) {
+                        if ($useraccess->timeaccess < $sixmonths && $useraccess->userid == $active-> userid && $inactive = false) {
+                            $records = array_push($active);
+                            $inactive = true;
+                            break;
                         }
                     }
                 }
-                /*$sql = "SELECT u.*
-                      FROM {local_eudest_masters} u,
-                           (SELECT userid,
-                                   TIMESTAMPDIFF(MONTH,
-                                      FROM_UNIXTIME(max(timeaccess),'%Y-%m-%d'),
-                                      FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d')) num_months
-                              FROM {user_lastaccess}
-                             GROUP BY userid
-                            HAVING num_months >= 6) la
-                     WHERE la.userid = u.userid
-                       AND startdate < UNIX_TIMESTAMP()
-                       AND enddate > UNIX_TIMESTAMP()
-                       AND inactivity6 = 0";
-                
-                $records = $DB->get_records_sql($sql, array());*/
-
+            }
             foreach ($records as $record) {
                 $rm = $this->eude_get_rm($record->categoryid);
                 // Add message to stack.
