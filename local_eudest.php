@@ -742,7 +742,7 @@ class local_eudest {
 
         // Get the last check inactivity date.
         $lastcheck = $this->eudeconfig->last_inactivity_date;
-        $today = strtotime('00:00');
+        $today = time();
 
         // Only one check by day.
         if ($lastcheck == $today) {
