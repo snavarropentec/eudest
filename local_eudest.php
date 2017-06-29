@@ -764,7 +764,7 @@ class local_eudest {
         if ($type || $type === 0) {
             $bdtimestamp = "current_timestamp";
             $nummonthsfunction = "(DATE_PART('year', current_timestamp) - DATE_PART('year', current_timestamp)) * 12 +
-                                  (DATE_PART('month', TO_TIMESTAMP(max(timeaccess))) - 
+                                  (DATE_PART('month', TO_TIMESTAMP(max(timeaccess))) -
                                         DATE_PART('month', TO_TIMESTAMP(max(timeaccess))))";
             $add18months = "extract(epoch from (TO_TIMESTAMP(enddate) + INTERVAL '18 month'))";
         }
@@ -776,7 +776,7 @@ class local_eudest {
                                $nummonthsfunction num_months
                           FROM {user_lastaccess}
                          GROUP BY userid
-                        HAVING num_months >= 6) la
+                        HAVING $nummonthsfunction >= 6) la
                  WHERE la.userid = u.userid
                    AND startdate < $bdtimestamp
                    AND enddate > $bdtimestamp
