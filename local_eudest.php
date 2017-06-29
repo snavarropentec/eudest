@@ -762,7 +762,7 @@ class local_eudest {
         $add18months = "UNIX_TIMESTAMP(TIMESTAMPADD(MONTH,18,FROM_UNIXTIME( enddate )))";
         $type = strpos($CFG->dbtype, 'pgsql');
         if ($type || $type === 0) {
-            $bdtimestamp = "current_timestamp";
+            $bdtimestamp = "CURRENT_TIMESTAMP";
             $nummonthsfunction = "(DATE_PART('year', CURRENT_TIMESTAMP) - DATE_PART('year', CURRENT_TIMESTAMP)) * 12 +
                                   (DATE_PART('month', TO_TIMESTAMP(max(timeaccess))) -
                                         DATE_PART('month', TO_TIMESTAMP(max(timeaccess))))";
@@ -1019,7 +1019,7 @@ class local_eudest {
         $msginac24subject = new lang_string('inac24_subject', $this->pluginname);
 
         $from = $this->get_admin();
-        $todaydate = strtotime('00:00');
+        $todaydate = time();
         $sql = "SELECT *
                       FROM {local_eudest_msgs}
                      WHERE sended = 0
