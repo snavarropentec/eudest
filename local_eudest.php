@@ -755,44 +755,27 @@ class local_eudest {
         $noticermoninactivity24 = $CFG->local_eudest_inac24notice;
         $lockuseroninactivity24 = $noticeuseroninactivity24 = $noticermoninactivity24;
         $type = strpos($CFG->dbtype, 'pgsql');
-        // $today = time();
+        $today = time();
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
-            if ($type || $type === 0) {
+            
                 $sixmonths = 183 * 86400;
-                $sqlusers = "SELECT userid, max(timeaccess) as lastaccess
-                                FROM {user_lastaccess}
-                                WHERE timeaccess < $sixmonths
-                                GROUP BY userid";
-                $recordusers = $DB->get_records_sql($sqlusers, array());
                 $records = array();
-                foreach ($recordusers as $useract) {
-                    if ($useract->lastaccess > $sixmonths) {
-                        $sql = "SELECT u.*
-                          FROM {local_eudest_masters}
-                         WHERE userid = $useract->userid
-                           AND startdate < current_timestamp
-                           AND enddate > current_timestamp)
-                           AND inactivity6 = 0";
-                        $new = $DB->get_records_sql($sql, array());
+                $activeusers = get_records('local_eudest_masters', array('inactivity6' => 0));
+                $access = get_records('user_lastaccess', array());
+                foreach ($activeusers as $active) {
+                    $inactive = false;
+                    if ($active->startdate < $today &&  $active->enddate > $today) {
+                        foreach ($access as $useraccess) {
+                            if ($useraccess->timeaccess < $sixmonths && $useraccess->userid == $active-> userid && $inactive = false) {
+                                $records = array_push($active);
+                                $inactive = true;
+                                break;
+                            }
+                        }
                     }
-                    $records = array_push($new);
                 }
                 /*$sql = "SELECT u.*
-                      FROM {local_eudest_masters} u,
-                           (SELECT userid,
-                                    DATEDIFF(month,
-                                        to_char(max(timeaccess), 'MM'),
-                                        to_char(current_timestamp, 'MM'))) num_months
-                              FROM {user_lastaccess}
-                             GROUP BY userid
-                            HAVING num_months >= 6) la
-                     WHERE la.userid = u.userid
-                       AND startdate < current_timestamp
-                       AND enddate > current_timestamp)
-                       AND inactivity6 = 0";*/
-            } else {
-                $sql = "SELECT u.*
                       FROM {local_eudest_masters} u,
                            (SELECT userid,
                                    TIMESTAMPDIFF(MONTH,
@@ -805,8 +788,9 @@ class local_eudest {
                        AND startdate < UNIX_TIMESTAMP()
                        AND enddate > UNIX_TIMESTAMP()
                        AND inactivity6 = 0";
-                $records = $DB->get_records_sql($sql, array());
-            }
+                
+                $records = $DB->get_records_sql($sql, array());*/
+
             foreach ($records as $record) {
                 $rm = $this->eude_get_rm($record->categoryid);
                 // Add message to stack.
