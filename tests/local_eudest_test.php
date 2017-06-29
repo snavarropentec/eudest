@@ -1707,6 +1707,7 @@ class local_eudest_testcase extends advanced_testcase {
         $this->assertEquals($results[$accessid4->id]->inactivity6, 0);
         $this->assertEquals($results[$accessid4->id]->inactivity18, 1);
         $this->assertEquals($results[$accessid4->id]->inactivity24, 1);
+
     }
 
     /**
