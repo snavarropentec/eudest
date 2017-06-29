@@ -763,7 +763,7 @@ class local_eudest {
         $type = strpos($CFG->dbtype, 'pgsql');
         if ($type || $type === 0) {
             $bdtimestamp = "current_timestamp";
-            $nummonthsfunction = "(DATE_PART('year', current_timestamp) - DATE_PART('year', current_timestamp)) * 12 +
+            $nummonthsfunction = "(DATE_PART('year', CURRENT_TIMESTAMP) - DATE_PART('year', CURRENT_TIMESTAMP)) * 12 +
                                   (DATE_PART('month', TO_TIMESTAMP(max(timeaccess))) -
                                         DATE_PART('month', TO_TIMESTAMP(max(timeaccess))))";
             $add18months = "extract(epoch from (TO_TIMESTAMP(enddate) + INTERVAL '18 month'))";
@@ -773,7 +773,7 @@ class local_eudest {
             $sql = "SELECT u.*
                   FROM {local_eudest_masters} u,
                        (SELECT userid,
-                               $nummonthsfunction num_months
+                               $nummonthsfunction as num_months
                           FROM {user_lastaccess}
                          GROUP BY userid
                         HAVING $nummonthsfunction >= 6) la
@@ -798,7 +798,7 @@ class local_eudest {
         $sql = "SELECT u.*, la.num_months
                   FROM {local_eudest_masters} u,
                        (SELECT userid,
-                               $nummonthsfunction num_months
+                               $nummonthsfunction as num_months
                           FROM {user_lastaccess}
                          GROUP BY userid
                         HAVING num_months >= 18) la
