@@ -801,7 +801,7 @@ class local_eudest {
                                $nummonthsfunction as num_months
                           FROM {user_lastaccess}
                          GROUP BY userid
-                        HAVING num_months >= 18) la
+                        HAVING $nummonthsfunction >= 18) la
                  WHERE la.userid = u.userid
                    AND $add18months < $bdtimestamp
                    AND inactivity18 = 0;";
