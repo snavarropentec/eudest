@@ -783,8 +783,7 @@ class local_eudest {
                    AND inactivity6 = 0";*/
             $sql = "SELECT u.*
                   FROM {local_eudest_masters} u,
-                 WHERE la.userid = u.userid
-                   AND startdate < $bdtimestamp
+                 WHERE startdate < $bdtimestamp
                    AND enddate > $bdtimestamp
                    AND inactivity6 = 0";
             $records = $DB->get_records_sql($sql, array());
