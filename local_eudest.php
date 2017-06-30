@@ -768,12 +768,9 @@ class local_eudest {
                                         DATE_PART('month', TO_TIMESTAMP(max(timeaccess))))";
             $add18months = "extract(epoch from (TO_TIMESTAMP(enddate) + INTERVAL '18 month'))";
         }
-        var_dump($bdtimestamp);
-        var_dump($nummonthsfunction);
-        var_dump($add18months);
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
-            $sql = "SELECT u.*
+            /*$sql = "SELECT u.*
                   FROM {local_eudest_masters} u,
                        (SELECT userid,
                                $nummonthsfunction as num_months
@@ -783,13 +780,13 @@ class local_eudest {
                  WHERE la.userid = u.userid
                    AND startdate < $bdtimestamp
                    AND enddate > $bdtimestamp
-                   AND inactivity6 = 0";
-            /*$sql = "SELECT u.*
-                  FROM {local_eudest_masters} u,
-                 WHERE u.userid = u.userid
-                   AND startdate < $bdtimestamp
-                   AND enddate > $bdtimestamp
                    AND inactivity6 = 0";*/
+            $sql = "SELECT u.*
+                  FROM {local_eudest_masters} u,
+                       (SELECT userid
+                          FROM {user_lastaccess}
+                         GROUP BY userid) la
+                 WHERE la.userid = u.userid
             $records = $DB->get_records_sql($sql, array());
             foreach ($records as $record) {
                 $rm = $this->eude_get_rm($record->categoryid);
