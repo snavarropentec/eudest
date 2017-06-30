@@ -786,7 +786,7 @@ class local_eudest {
                        (SELECT userid
                           FROM {user_lastaccess}
                          GROUP BY userid) la
-                 WHERE la.userid = u.userid
+                 WHERE la.userid = u.userid";
             $records = $DB->get_records_sql($sql, array());
             foreach ($records as $record) {
                 $rm = $this->eude_get_rm($record->categoryid);
