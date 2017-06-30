@@ -763,8 +763,8 @@ class local_eudest {
         $type = strpos($CFG->dbtype, 'pgsql');
         if ($type || $type === 0) {
             $bdtimestamp = "EXTRACT(EPOCH FROM(CURRENT_TIMESTAMP))";
-            $nummonthsfunction = "(DATE_PART('year', CURRENT_TIMESTAMP) - DATE_PART('year', CURRENT_TIMESTAMP)) * 12 +
-                                  (DATE_PART('month', TO_TIMESTAMP(max(timeaccess))) -
+            $nummonthsfunction = "(DATE_PART('year', CURRENT_TIMESTAMP) - DATE_PART('year', TO_TIMESTAMP(max(timeaccess)))) * 12 +
+                                  (DATE_PART('month', CURRENT_TIMESTAMP) -
                                         DATE_PART('month', TO_TIMESTAMP(max(timeaccess))))";
             $add18months = "extract(epoch from (TO_TIMESTAMP(enddate) + INTERVAL '18 month'))";
         }
