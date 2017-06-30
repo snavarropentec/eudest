@@ -1687,7 +1687,7 @@ class local_eudest_testcase extends advanced_testcase {
         $this->set_protected ($instance1, 'eudeconfig', $eudeconfig2);
         $return = $this->invoke_method($instance1, 'eude_generate_inactivity_messages', array());
         $results = $DB->get_records('local_eudest_masters');
-
+        var_dump($results[$accessid1->id]);
         // User 1, last access after 6 months on active module.
         $this->assertEquals($results[$accessid1->id]->inactivity6, 1);
         $this->assertEquals($results[$accessid1->id]->inactivity18, 0);
