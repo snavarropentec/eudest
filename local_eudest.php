@@ -770,7 +770,7 @@ class local_eudest {
         }
         // Get users inactives for 6 months.
         if ($noticermoninactivity6) {
-            /*$sql = "SELECT u.*
+            $sql = "SELECT u.*
                   FROM {local_eudest_masters} u,
                        (SELECT userid,
                                $nummonthsfunction as num_months
@@ -780,8 +780,8 @@ class local_eudest {
                  WHERE la.userid = u.userid
                    AND startdate < $bdtimestamp
                    AND enddate > $bdtimestamp
-                   AND inactivity6 = 0";*/
-            $sql = "SELECT u.*
+                   AND inactivity6 = 0";
+            /*$sql = "SELECT u.*
                   FROM {local_eudest_masters} u,
                        (SELECT userid
                           FROM {user_lastaccess}
@@ -789,7 +789,7 @@ class local_eudest {
                  WHERE la.userid = u.userid
                     AND startdate < $bdtimestamp
                    AND enddate > $bdtimestamp
-                   AND inactivity6 = 0";
+                   AND inactivity6 = 0";*/
             $records = $DB->get_records_sql($sql, array());
             foreach ($records as $record) {
                 $rm = $this->eude_get_rm($record->categoryid);
