@@ -786,7 +786,10 @@ class local_eudest {
                        (SELECT userid
                           FROM {user_lastaccess}
                          GROUP BY userid) la
-                 WHERE la.userid = u.userid";
+                 WHERE la.userid = u.userid
+                    AND startdate < $bdtimestamp
+                   AND enddate > $bdtimestamp
+                   AND inactivity6 = 0";
             $records = $DB->get_records_sql($sql, array());
             foreach ($records as $record) {
                 $rm = $this->eude_get_rm($record->categoryid);
