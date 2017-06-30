@@ -781,15 +781,6 @@ class local_eudest {
                    AND startdate < $bdtimestamp
                    AND enddate > $bdtimestamp
                    AND inactivity6 = 0";
-            /*$sql = "SELECT u.*
-                  FROM {local_eudest_masters} u,
-                       (SELECT userid
-                          FROM {user_lastaccess}
-                         GROUP BY userid) la
-                 WHERE la.userid = u.userid
-                    AND startdate < $bdtimestamp
-                   AND enddate > $bdtimestamp
-                   AND inactivity6 = 0";*/
             $records = $DB->get_records_sql($sql, array());
             foreach ($records as $record) {
                 $rm = $this->eude_get_rm($record->categoryid);
@@ -801,7 +792,6 @@ class local_eudest {
                 $DB->update_record('local_eudest_masters', $record);
             }
         }
-        var_dump($records);
         // Get users inactives for 18 months after finish the master.
         $sql = "SELECT u.*, la.num_months
                   FROM {local_eudest_masters} u,
