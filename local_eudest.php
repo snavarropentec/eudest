@@ -226,6 +226,7 @@ class local_eudest {
                   JOIN {course} c ON c.id = e.courseid
                  WHERE ue.id > :lastid
                    AND r.shortname like '%student%'
+                   AND (c.shortname like 'MI.%' OR c.shortname like '%.M%')
               ORDER BY ue.id ASC";
 
         $records = $DB->get_records_sql($sql, array('lastid' => $lastid));
@@ -759,6 +760,7 @@ class local_eudest {
         $bdtimestamp = "UNIX_TIMESTAMP()";
         $nummonthsfunction = "TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(max(timeaccess),'%Y-%m-%d'),
                 FROM_UNIXTIME(UNIX_TIMESTAMP(),'%Y-%m-%d'))";
+        $nummonths = "num_months";
         $add18months = "UNIX_TIMESTAMP(TIMESTAMPADD(MONTH,18,FROM_UNIXTIME( enddate )))";
         $type = strpos($CFG->dbtype, 'pgsql');
         if ($type || $type === 0) {
@@ -766,6 +768,7 @@ class local_eudest {
             $nummonthsfunction = "(DATE_PART('year', CURRENT_TIMESTAMP) - DATE_PART('year', TO_TIMESTAMP(max(timeaccess)))) * 12 +
                                   (DATE_PART('month', CURRENT_TIMESTAMP) -
                                         DATE_PART('month', TO_TIMESTAMP(max(timeaccess))))";
+            $nummonths = $nummonthsfunction;
             $add18months = "extract(epoch from (TO_TIMESTAMP(enddate) + INTERVAL '18 month'))";
         }
         // Get users inactives for 6 months.
@@ -776,7 +779,7 @@ class local_eudest {
                                $nummonthsfunction as num_months
                           FROM {user_lastaccess}
                          GROUP BY userid
-                        HAVING $nummonthsfunction >= 6) la
+                        HAVING $nummonths >= 6) la
                  WHERE la.userid = u.userid
                    AND startdate < $bdtimestamp
                    AND enddate > $bdtimestamp
@@ -799,7 +802,7 @@ class local_eudest {
                                $nummonthsfunction as num_months
                           FROM {user_lastaccess}
                          GROUP BY userid
-                        HAVING $nummonthsfunction >= 18) la
+                        HAVING $nummonths >= 18) la
                  WHERE la.userid = u.userid
                    AND $add18months < $bdtimestamp
                    AND inactivity18 = 0;";
@@ -1017,7 +1020,7 @@ class local_eudest {
         $msginac24subject = new lang_string('inac24_subject', $this->pluginname);
 
         $from = $this->get_admin();
-        $todaydate = time();
+        $todaydate = strtotime("00:00");
         $sql = "SELECT *
                       FROM {local_eudest_msgs}
                      WHERE sended = 0
