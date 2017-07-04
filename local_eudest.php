@@ -1020,8 +1020,7 @@ class local_eudest {
         $msginac24subject = new lang_string('inac24_subject', $this->pluginname);
 
         $from = $this->get_admin();
-        $todaydate = time();
-        //$todaydate = strtotime("00:00");
+        $todaydate = strtotime('00:00');
         $sql = "SELECT *
                       FROM {local_eudest_msgs}
                      WHERE sended = 0
