@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/local/eudest/local_eudest.php');
+include($CFG->dirroot . '/local/eudest/local_eudest.php');
 
 /**
  * This class is used to run the unit tests
