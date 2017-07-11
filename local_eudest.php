@@ -934,7 +934,6 @@ class local_eudest {
             $lastcheck = $record->timemodified;
             $userid = $record->userid;
             $shortname = str_replace("$this->intensivetag", "", $record->shortname);
-            echo "SHORTNAME: $shortname     ";
             $sql2 = "SELECT gi.id itemid, gi.courseid, gi.grademax, gg.id gradeid, gg.userid, gg.finalgrade, gg.information
                       FROM {grade_grades} GG
                  JOIN {grade_items} GI ON GG.itemid = GI.id
@@ -1060,8 +1059,6 @@ class local_eudest {
                      WHERE sended = 0
                        AND msgdate = :todaydate";
         $records = $DB->get_records_sql($sql, array("todaydate" => $todaydate));
-        echo $todaydate;
-        echo '<pre>';var_dump($records);
         foreach ($records as $record) {
             $categoryid = $record->categoryid;
             $target = $record->msgtarget;

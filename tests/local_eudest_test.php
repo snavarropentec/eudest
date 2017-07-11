@@ -1974,9 +1974,8 @@ class local_eudest_testcase extends advanced_testcase {
         $eudeconf->id = 0;
         $eudeconf->last_enrolid = 1;
         $eudeconf->last_inactivity_date = time();
-        $eudeconf->last_califications_date = time() - 90000;
+        $eudeconf->last_califications_date = time() - 150000;
         $this->set_protected($instance1, 'eudeconfig', $eudeconf);
-
         // Creating user.
         $user1 = $this->getDataGenerator()->create_user(array('username' => 'usuario 1', 'email' => 'user1@php.com'));
 
@@ -2000,53 +1999,84 @@ class local_eudest_testcase extends advanced_testcase {
         $this->getDataGenerator()->create_grade_category(
                 array('courseid' => $course2->id, 'fullname' => 'Grade Category Intensives', 'aggregation' => '13'));
 
-        // Creating grades.
-        $grade1 = $this->getDataGenerator()->create_grade_item(array(
-            'itemtype' => 'course', 'courseid' => $course1->id, 'category' => $category1->id));
-        $grade2 = $this->getDataGenerator()->create_grade_item(array(
-            'itemtype' => 'course', 'courseid' => $course2->id, 'category' => $category2->id));
-        $grade3 = $this->getDataGenerator()->create_grade_item(array(
-            'itemtype' => 'course', 'courseid' => $course3->id, 'category' => $category1->id));
-        $grade4 = $this->getDataGenerator()->create_grade_item(array(
-            'itemtype' => 'course', 'courseid' => $course4->id, 'category' => $category2->id));
+        // Creating quizs.
+        $quiz1 = $this->getDataGenerator()->create_module('quiz', array('course' => $course1->id));
+        $quiz2 = $this->getDataGenerator()->create_module('quiz', array('course' => $course2->id));
+        $quiz3 = $this->getDataGenerator()->create_module('quiz', array('course' => $course3->id));
+        $quiz4 = $this->getDataGenerator()->create_module('quiz', array('course' => $course4->id));
 
-        $grades1 = new stdClass();
-        $grades1->itemid = $grade1->id;
-        $grades1->finalgrade = 60;
-        $grades1->userid = $user1->id;
-        $grades1->timemodified = time() - 120000;
-        $DB->insert_record('grade_grades', $grades1);
+        // Getting grade item id from each quiz.
+        $itemid1 = $DB->get_record('grade_items', array('itemtype' => 'course', 'courseid' => $course1->id));
+        $itemid2 = $DB->get_record('grade_items', array('itemtype' => 'course', 'courseid' => $course2->id));
+        $itemid3 = $DB->get_record('grade_items', array('itemtype' => 'course', 'courseid' => $course3->id));
+        $itemid4 = $DB->get_record('grade_items', array('itemtype' => 'course', 'courseid' => $course4->id));
 
-        $grades2 = new stdClass();
-        $grades2->itemid = $grade2->id;
-        $grades2->finalgrade = 90;
-        $grades2->userid = $user1->id;
-        $grades2->timemodified = time();
-        $DB->insert_record('grade_grades', $grades2);
+        // Creating grades for the quiz.
+        $studentgrade1 = new stdClass();
+        $studentgrade1->itemid = $itemid1->id;
+        $studentgrade1->userid = $user1->id;
+        $studentgrade1->finalgrade = 60.0000;
+        $studentgrade1->rawgrademax = 10.00000;
+        $studentgrade1->rawgrademin = 0.00000;
+        $studentgrade1->timecreated = time() - 400;
+        $studentgrade1->timemodified = time() - 400;
+        $DB->insert_record('grade_grades', $studentgrade1);
 
-        $grades3 = new stdClass();
-        $grades3->itemid = $grade3->id;
-        $grades3->finalgrade = 80;
-        $grades3->userid = $user1->id;
-        $grades3->timemodified = time() - 120000;
-        $DB->insert_record('grade_grades', $grades3);
+        $inserttest = $DB->get_record('grade_grades', array('userid' => $user1->id, 'itemid' => $itemid1->id));
+        $this->assertEquals($inserttest->finalgrade, '60.00000');
+        
+        // Intensive course quiz.
+        $intnesivegrade2 = new stdClass();
+        $intnesivegrade2->itemid = $itemid2->id;
+        $intnesivegrade2->userid = $user1->id;
+        $intnesivegrade2->finalgrade = 90.0000;
+        $intnesivegrade2->rawgrademax = 10.00000;
+        $intnesivegrade2->rawgrademin = 0.00000;
+        $intnesivegrade2->timecreated = time() - 400;
+        $intnesivegrade2->timemodified = time() - 400;
+        $DB->insert_record('grade_grades', $intnesivegrade2);
 
-        $grades4 = new stdClass();
-        $grades4->itemid = $grade4->id;
-        $grades4->finalgrade = 70;
-        $grades4->userid = $user1->id;
-        $grades4->timemodified = time();
-        $DB->insert_record('grade_grades', $grades4);
+        $inserttest = $DB->get_record('grade_grades', array('userid' => $user1->id, 'itemid' => $itemid2->id));
+        $this->assertEquals($inserttest->finalgrade, '90.00000');
 
+        // Creating grades for the quiz.
+        $studentgrade3 = new stdClass();
+        $studentgrade3->itemid = $itemid3->id;
+        $studentgrade3->userid = $user1->id;
+        $studentgrade3->finalgrade = 80.0000;
+        $studentgrade3->rawgrademax = 10.00000;
+        $studentgrade3->rawgrademin = 0.00000;
+        $studentgrade3->timecreated = time() - 400;
+        $studentgrade3->timemodified = time() - 400;
+        $DB->insert_record('grade_grades', $studentgrade3);
+
+        $inserttest = $DB->get_record('grade_grades', array('userid' => $user1->id, 'itemid' => $itemid3->id));
+        $this->assertEquals($inserttest->finalgrade, '80.00000');
+
+        // Intensive course quiz.
+        $intnesivegrade4 = new stdClass();
+        $intnesivegrade4->itemid = $itemid4->id;
+        $intnesivegrade4->userid = $user1->id;
+        $intnesivegrade4->finalgrade = 70.0000;
+        $intnesivegrade4->rawgrademax = 10.00000;
+        $intnesivegrade4->rawgrademin = 0.00000;
+        $intnesivegrade4->timecreated = time() - 400;
+        $intnesivegrade4->timemodified = time() - 400;
+        $DB->insert_record('grade_grades', $intnesivegrade4);
+
+        $inserttest = $DB->get_record('grade_grades', array('userid' => $user1->id, 'itemid' => $itemid4->id));
+        $this->assertEquals($inserttest->finalgrade, '70.00000');
+        
         $this->invoke_method($instance1, 'eude_override_califications');
-
+        
         // Test1: Insert higher grade in intensive couse, so it should replace the normal course grade.
-        $result = $DB->get_record('grade_grades', array('itemid' => $grade1->id));
+        $result = $DB->get_record('grade_grades', array('itemid' => $studentgrade1->itemid));
         $this->assertEquals('90.00000', $result->finalgrade);
 
         // Test2: Insert lower grade in intensive, so it shouldn't replace the normal course grade.
-        $result2 = $DB->get_record('grade_grades', array('itemid' => $grade3->id));
+        $result2 = $DB->get_record('grade_grades', array('itemid' => $studentgrade3->itemid));
         $this->assertEquals('80.00000', $result2->finalgrade);
+
     }
 
 }
