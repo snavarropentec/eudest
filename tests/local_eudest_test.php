@@ -480,8 +480,7 @@ class local_eudest_testcase extends advanced_testcase {
         $enrol2id = $DB->get_record('local_eudest_enrols', array('courseid' => $course4->id));
 
         $expected = [$enrol1id->id => $enrol1, $enrol2id->id => $enrol2];
-var_dump($expected);
-var_dump($query);
+
         $this->assertEquals($expected[$enrol1id->id]->courseid, $query[$enrol1id->id]->courseid);
         $this->assertEquals($expected[$enrol1id->id]->shortname, $query[$enrol1id->id]->shortname);
         $this->assertEquals($expected[$enrol1id->id]->categoryid, $query[$enrol1id->id]->categoryid);
