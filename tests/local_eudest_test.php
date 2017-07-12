@@ -125,7 +125,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests if configuration can be loaded
      */
-    public function notest_eude_load_configuration () {
+    public function test_eude_load_configuration () {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -159,7 +159,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests if a course is intensive.
      */
-    public function notest_eude_module_is_intensive () {
+    public function test_eude_module_is_intensive () {
         $this->resetAfterTest(true);
 
         // Creating a instance of the local_eudest class.
@@ -184,7 +184,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests if a course allows to a master.
      */
-    public function notest_eude_module_allows_to_master () {
+    public function test_eude_module_allows_to_master () {
         $this->resetAfterTest(true);
 
         // Creating a instance of the local_eudest class.
@@ -221,7 +221,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests if a course is convalidable.
      */
-    public function notest_eude_module_is_convalidable () {
+    public function test_eude_module_is_convalidable () {
         $this->resetAfterTest(true);
 
         // Creating a instance of the local_eudest class.
@@ -252,7 +252,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests if an enrolment can be saved.
      */
-    public function notest_eude_save_enrolment_instance () {
+    public function test_eude_save_enrolment_instance () {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -507,7 +507,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests save encapsulations of enrolments.
      */
-    public function notest_eude_save_encapsulation () {
+    public function test_eude_save_encapsulation () {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -543,7 +543,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests if enrolments are encapsulated in a master encapsulation.
      */
-    public function notest_eude_encapsulate_enrolments () {
+    public function test_eude_encapsulate_enrolments () {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -788,7 +788,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests if event can be added to calendar.
      */
-    public function notest_eude_add_event_to_calendar () {
+    public function test_eude_add_event_to_calendar () {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -862,7 +862,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests if generate events in calendar from enrolments.
      */
-    public function notest_eude_generate_course_events () {
+    public function test_eude_generate_course_events () {
         global $DB;
         global $CFG;
         $this->resetAfterTest(true);
@@ -1090,7 +1090,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests if message is added to stack.
      */
-    public function notest_eude_add_message_to_stack () {
+    public function test_eude_add_message_to_stack () {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1132,7 +1132,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Test to get the manager of a category.
      */
-    public function notest_eude_get_rm () {
+    public function test_eude_get_rm () {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1205,7 +1205,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests convalidation between courses.
      */
-    public function notest_eude_convalidate_modules () {
+    public function test_eude_convalidate_modules () {
         global $DB;
         global $CFG;
         $this->resetAfterTest(true);
@@ -1434,7 +1434,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests generate master messages from encapsulation.
      */
-    public function notest_eude_generate_master_messages () {
+    public function test_eude_generate_master_messages () {
         global $DB;
         global $CFG;
 
@@ -1547,7 +1547,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests generate inactivity messages.
      */
-    public function notest_eude_generate_inactivity_messages () {
+    public function test_eude_generate_inactivity_messages () {
         global $DB;
         global $CFG;
 
@@ -1707,7 +1707,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests if can update course total grade.
      */
-    public function notest_eude_update_course_grade () {
+    public function test_eude_update_course_grade () {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1779,7 +1779,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests if messages are sended.
      */
-    public function notest_eude_send_scheduled_messages () {
+    public function test_eude_send_scheduled_messages () {
         global $DB;
         global $CFG;
 
@@ -1796,7 +1796,7 @@ class local_eudest_testcase extends advanced_testcase {
         $CFG->local_eudest_inac24sttext = 'Inactive 24 months Student Text';
         $CFG->wwwroot = 'http://192.168.1.26/moodle30';
 
-        $today = time();
+        $today = strtotime(date('Y-m-d', time()));
         $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
 
         // Create users, category and category context.
@@ -1902,6 +1902,8 @@ class local_eudest_testcase extends advanced_testcase {
 
         $this->invoke_method($instance1, 'eude_send_scheduled_messages', array());
 
+        $test = $DB->get_records('local_eudest_msgs', array());
+
         // Test Sended messages after use the function.
         $messages5 = $DB->get_records('local_eudest_msgs', array());
         $this->assertCount(0, $messages5);
@@ -1910,7 +1912,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests if configuration can be saved.
      */
-    public function notest_eude_save_configuration () {
+    public function test_eude_save_configuration () {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1947,7 +1949,7 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests Get category.
      */
-    public function notest_getcategory () {
+    public function test_getcategory () {
 
         $this->resetAfterTest(true);
 
@@ -1964,15 +1966,16 @@ class local_eudest_testcase extends advanced_testcase {
     /**
      * Tests Override califications.
      */
-    public function notest_eude_override_califications () {
+    public function test_eude_override_califications () {
         global $CFG;
         global $DB;
 
         $this->resetAfterTest(true);
 
         $instance1 = new local_eudest();
-
         $CFG->local_eudest_override = 1;
+
+        $this->set_protected($instance1, 'intensivetag', 'MI');
 
         $eudeconf = new stdClass();
         $eudeconf->id = 0;
@@ -2028,7 +2031,7 @@ class local_eudest_testcase extends advanced_testcase {
 
         $inserttest = $DB->get_record('grade_grades', array('userid' => $user1->id, 'itemid' => $itemid1->id));
         $this->assertEquals($inserttest->finalgrade, '60.00000');
-        
+
         // Intensive course quiz.
         $intnesivegrade2 = new stdClass();
         $intnesivegrade2->itemid = $itemid2->id;
