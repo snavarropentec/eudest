@@ -566,17 +566,17 @@ class local_eudest_testcase extends advanced_testcase {
 
         // Creating courses related to the categories above.
         $course1 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'Course 1', 'category' => $category1->id));
+                array('shortname' => 'C1.M.Course 1', 'category' => $category1->id));
         $course2 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'Course 2', 'category' => $category1->id));
+                array('shortname' => 'C1.M.Course 2', 'category' => $category1->id));
         $course3 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'Course 3', 'category' => $category2->id));
+                array('shortname' => 'C2.M.Course 3', 'category' => $category2->id));
         $course4 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'Course 4', 'category' => $category2->id));
+                array('shortname' => 'C2.M.Course 4', 'category' => $category2->id));
         $course5 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'Course 5', 'category' => $category3->id));
+                array('shortname' => 'C3.M.Course 5', 'category' => $category3->id));
         $course6 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'Course 6', 'category' => $category3->id));
+                array('shortname' => 'C3.M.Course 6', 'category' => $category3->id));
         $course7 = $this->getDataGenerator()->create_course(
                 array('shortname' => 'MI.Course 1', 'category' => $category1->id));
         $course8 = $this->getDataGenerator()->create_course(
