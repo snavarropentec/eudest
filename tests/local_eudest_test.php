@@ -1442,11 +1442,13 @@ class local_eudest_testcase extends advanced_testcase {
 
         $instance1 = new local_eudest();
 
+        $this->invoke_method($instance1, 'eude_load_configuration', array());
+        
         $manualplugin = self::enable_enrol_plugin();
         $this->assertNotEmpty($manualplugin);
         $studentrole = self::get_student_role();
 
-        $today = time();
+        $today = strtotime(date('Y-m-d', time('00:00')));
         $month = 2629800;
 
         // Test without CFG parameters.
@@ -1463,8 +1465,10 @@ class local_eudest_testcase extends advanced_testcase {
         $user3 = $this->getDataGenerator()->create_user(array('username' => 'usuario 3'));
 
         $category1 = $this->getDataGenerator()->create_category(array('name' => 'Category 1'));
+        $category2 = $this->getDataGenerator()->create_category(array('name' => 'Category 2'));
 
         $course1 = $this->getDataGenerator()->create_course(array('shortname' => 'Course 1', 'category' => $category1->id));
+        $course2 = $this->getDataGenerator()->create_course(array('shortname' => 'MI.Course 1', 'category' => $category2->id));
 
         $manualinstance = self::create_manual_instance($course1->id);
         $manualplugin->enrol_user($manualinstance, $user1->id, $studentrole->id, $today - (10 * $month), $today - (5 * $month));
