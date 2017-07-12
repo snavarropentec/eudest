@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -884,7 +883,8 @@ class local_eudest {
                     }
                     // Notice user.
                     if ($noticeuseroninactivity24) {
-                        $this->eude_add_message_to_stack($record->categoryid, $record->userid, "", $this->msgtypeuserlocked, $today);
+                        $this->eude_add_message_to_stack($record->categoryid, $record->userid, "",
+                                $this->msgtypeuserlocked, $today);
                     }
                 }
             }
@@ -939,9 +939,9 @@ class local_eudest {
             $userid = $record->userid;
             $shortname = str_replace("$this->intensivetag", "", $record->shortname);
             $sql2 = "SELECT gi.id itemid, gi.courseid, gi.grademax, gg.id gradeid, gg.userid, gg.finalgrade, gg.information
-                      FROM {grade_grades} GG
-                 JOIN {grade_items} GI ON GG.itemid = GI.id
-                 JOIN {course} GC ON GI.courseid = GC.id
+                      FROM {grade_grades} gg
+                 JOIN {grade_items} gi ON gg.itemid = gi.id
+                 JOIN {course} gc ON gi.courseid = gc.id
                      WHERE gi.itemtype = 'course'
                        AND gg.userid = :userid
                        AND shortname LIKE CONCAT('%.M', CONCAT(:shortname, '%'))";

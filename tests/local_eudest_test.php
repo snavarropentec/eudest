@@ -563,6 +563,7 @@ class local_eudest_testcase extends advanced_testcase {
         $category1 = $this->getDataGenerator()->create_category(array('name' => 'Category 1'));
         $category2 = $this->getDataGenerator()->create_category(array('name' => 'Category 2'));
         $category3 = $this->getDataGenerator()->create_category(array('name' => 'Category 3'));
+        $category0 = $this->getDataGenerator()->create_category(array('name' => 'Intensives'));
 
         // Creating courses related to the categories above.
         $course1 = $this->getDataGenerator()->create_course(
@@ -578,9 +579,9 @@ class local_eudest_testcase extends advanced_testcase {
         $course6 = $this->getDataGenerator()->create_course(
                 array('shortname' => 'C3.M.Course 6', 'category' => $category3->id));
         $course7 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'MI.Course 1', 'category' => $category1->id));
+                array('shortname' => 'MI.Course 1', 'category' => $category0->id));
         $course8 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'MI.Course 3', 'category' => $category2->id));
+                array('shortname' => 'MI.Course 3', 'category' => $category0->id));
 
         // Enrol student 1 in courses 1 to 8 as a student.
         $this->getDataGenerator()->enrol_user($student1->id, $course1->id, $studentrole->id, 'manual');
@@ -684,7 +685,7 @@ class local_eudest_testcase extends advanced_testcase {
         $record7->userid = $student1->id;
         $record7->courseid = $course7->id;
         $record7->shortname = $course7->shortname;
-        $record7->categoryid = $category1->id;
+        $record7->categoryid = $category0->id;
         $record7->startdate = $startdate;
         $record7->enddate = $enddate;
         $record7->pend_event = 1;
@@ -697,7 +698,7 @@ class local_eudest_testcase extends advanced_testcase {
         $record8->userid = $student1->id;
         $record8->courseid = $course8->id;
         $record8->shortname = $course8->shortname;
-        $record8->categoryid = $category2->id;
+        $record8->categoryid = $category0->id;
         $record8->startdate = $startdate;
         $record8->enddate = $enddate;
         $record8->pend_event = 1;
@@ -736,7 +737,7 @@ class local_eudest_testcase extends advanced_testcase {
         $record11->userid = $student2->id;
         $record11->courseid = $course8->id;
         $record11->shortname = $course8->shortname;
-        $record11->categoryid = $category2->id;
+        $record11->categoryid = $category0->id;
         $record11->startdate = $startdate;
         $record11->enddate = $enddate;
         $record11->pend_event = 1;
