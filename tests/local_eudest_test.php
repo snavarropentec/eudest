@@ -192,22 +192,24 @@ class local_eudest_testcase extends advanced_testcase {
 
         // Creating courses.
         $category1 = $this->getDataGenerator()->create_category(array('name' => 'Category 1'));
+        $category2 = $this->getDataGenerator()->create_category(array('name' => 'Intensive Category'));
+
         $course1 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'CAT1.M01', 'category' => $category1->id));
+                array('shortname' => 'C1.M.TT', 'category' => $category1->id));
         $course2 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'MI.CAT1.M01', 'category' => $category1->id));
+                array('shortname' => 'MI.TT', 'category' => $category2->id));
         $course3 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'CAT1.01', 'category' => $category1->id));
+                array('shortname' => 'CAT1.M01', 'category' => $category1->id));
         $course4 = $this->getDataGenerator()->create_course(
                 array('shortname' => 'MI.CAT1.01', 'category' => $category1->id));
 
-        // Test1: Use course1 (should return 1).
+        // Test1: Use course1 (should return 1 because it has '.M.').
         $result = $this->invoke_method($instance1, 'eude_module_allows_to_master', array($course1->shortname));
         $this->assertEquals(1, $result);
 
-        // Test2: Use course2 (should return 1).
+        // Test2: Use course2 (should return 0).
         $result = $this->invoke_method($instance1, 'eude_module_allows_to_master', array($course2->shortname));
-        $this->assertEquals(1, $result);
+        $this->assertEquals(0, $result);
 
         // Test3: Use course3 (should return 0).
         $result = $this->invoke_method($instance1, 'eude_module_allows_to_master', array($course3->shortname));
@@ -1443,7 +1445,7 @@ class local_eudest_testcase extends advanced_testcase {
         $instance1 = new local_eudest();
 
         $this->invoke_method($instance1, 'eude_load_configuration', array());
-        
+
         $manualplugin = self::enable_enrol_plugin();
         $this->assertNotEmpty($manualplugin);
         $studentrole = self::get_student_role();
@@ -1993,7 +1995,7 @@ class local_eudest_testcase extends advanced_testcase {
         // Creating courses.
         $course1 = $this->getDataGenerator()->create_course(array('shortname' => 'CA.M.FM', 'category' => $category1->id));
         $course2 = $this->getDataGenerator()->create_course(array('shortname' => 'MI.FM', 'category' => $category2->id));
-        $course3 = $this->getDataGenerator()->create_course(array('shortname' => 'CA.M.JJ', 'category' => $category1->id));
+        $course3 = $this->getDataGenerator()->create_course(array('shortname' => 'CA.M.JJ[-1-]', 'category' => $category1->id));
         $course4 = $this->getDataGenerator()->create_course(array('shortname' => 'MI.JJ', 'category' => $category2->id));
 
         // Enrol user in course.
@@ -2073,9 +2075,9 @@ class local_eudest_testcase extends advanced_testcase {
 
         $inserttest = $DB->get_record('grade_grades', array('userid' => $user1->id, 'itemid' => $itemid4->id));
         $this->assertEquals($inserttest->finalgrade, '70.00000');
-        
+
         $this->invoke_method($instance1, 'eude_override_califications');
-        
+
         // Test1: Insert higher grade in intensive couse, so it should replace the normal course grade.
         $result = $DB->get_record('grade_grades', array('itemid' => $studentgrade1->itemid));
         $this->assertEquals('90.00000', $result->finalgrade);
