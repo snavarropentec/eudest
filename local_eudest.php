@@ -953,10 +953,12 @@ class local_eudest {
                 $information = $module->information;
 
                 if ($information == null || $information == "") {
-                    $information = new lang_string('normal_grade', $this->pluginname) . ": " . $actualcalification . ".";
+                    $information = new lang_string('normal_grade', $this->pluginname) .
+                            ": " . number_format($actualcalification, 2, '.', '') . ".";
                 }
                 $information = new lang_string('intensive_grade', $this->pluginname) .
-                        " (" . date("d/m/y, H:i:s", $record->timemodified) . "):$newcalification. " . $information;
+                        " (" . date("d/m/y, H:i:s", $record->timemodified) . "): " .
+                        number_format($newcalification, 2, '.', '') . ". " .$information;
                 // Update total course grade.
                 if ($newcalification > $actualcalification) {
                     $this->eude_update_course_grade($module->itemid, $module->courseid, $userid, $newcalification, $information);
