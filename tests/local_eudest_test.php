@@ -1401,7 +1401,7 @@ class local_eudest_testcase extends advanced_testcase {
                        FROM {grade_items} gi
                        JOIN {grade_grades} gg on gg.itemid = gi.id
                        JOIN {course} c on gi.courseid = c.id
-                       JOIN {local_eudest_enrols} e gi on e.courseid = gi.courseid
+                       JOIN {local_eudest_enrols} e on e.courseid = gi.courseid
                       WHERE gi.itemtype = 'course'";
         $grades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(4, $grades);
