@@ -1397,10 +1397,11 @@ class local_eudest_testcase extends advanced_testcase {
         $grades6->userid = $user2->id;
         $DB->insert_record('grade_grades', $grades6, false);
 
-        $sqlgrade = "SELECT gg.id, gg.itemid, gi.courseid, c.shortname, gg.userid, gi.grademax, gg.finalgrade
+        $sqlgrade = "SELECT distinct(e.id) uniqueid, gg.id, gg.itemid, gi.courseid, c.shortname, gg.userid, gi.grademax, gg.finalgrade
                        FROM {grade_items} gi
                        JOIN {grade_grades} gg on gg.itemid = gi.id
                        JOIN {course} c on gi.courseid = c.id
+                       JOIN {local_eudest_enrols} e gi on e.courseid = gi.courseid
                       WHERE gi.itemtype = 'course'";
         $grades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(4, $grades);
