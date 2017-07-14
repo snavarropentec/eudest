@@ -1426,7 +1426,6 @@ $sql = "SELECT e.*, gi.id itemid, gg.finalgrade
                   LEFT JOIN {grade_grades} gg on gg.itemid = gi.id
                  WHERE e.pend_convalidation = 1
                    AND gi.itemtype = 'course'
-                   AND e.userid = gg.userid
                    AND e.intensive = 0
               ORDER BY e.userid, e.startdate ASC";
         $records = $DB->get_records_sql($sql, array());
