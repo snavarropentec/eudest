@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -194,6 +195,7 @@ class local_eudest {
             $record->last_califications_date = 0;
         }
         $this->eudeconfig = $record;
+        $this->eudeconfig->last_enrolid_for_intensives_msgs = $this->eudeconfig->last_enrolid;
     }
 
     /**
@@ -226,6 +228,7 @@ class local_eudest {
                   JOIN {course} c ON c.id = e.courseid
                  WHERE ue.id > :lastid
                    AND r.shortname like '%student%'
+                   AND (c.shortname like '%.M.%' OR c.shortname like 'MI.%')
               ORDER BY ue.id ASC";
 
         $records = $DB->get_records_sql($sql, array('lastid' => $lastid));
@@ -672,7 +675,8 @@ class local_eudest {
                   FROM {local_eudest_enrols} lee
                  WHERE lee.intensive = 1
                    AND lee.id > :lastenrolid';
-        $intensivecourserecords = $DB->get_records_sql($sql, array('lastenrolid' => $this->eudeconfig->last_enrolid));
+        $intensivecourserecords = $DB->get_records_sql($sql,
+                array('lastenrolid' => $this->eudeconfig->last_enrolid_for_intensives_msgs));
         $intensivetag = $this->intensivetag;
         // We recover the intensive module category.
         $sql = "SELECT DISTINCT c.category
@@ -883,8 +887,7 @@ class local_eudest {
                     }
                     // Notice user.
                     if ($noticeuseroninactivity24) {
-                        $this->eude_add_message_to_stack($record->categoryid, $record->userid, "",
-                                $this->msgtypeuserlocked, $today);
+                        $this->eude_add_message_to_stack($record->categoryid, $record->userid, "", $this->msgtypeuserlocked, $today);
                     }
                 }
             }
@@ -954,14 +957,40 @@ class local_eudest {
 
                 if ($information == null || $information == "") {
                     $information = new lang_string('normal_grade', $this->pluginname) .
-                            ": " . number_format($actualcalification, 2, '.', '') . ".";
+                            ": " . number_format($actualcalification, 2, '.', '') . "/ "
+                            . number_format($module->grademax, 2, '.', '') . ".";
                 }
                 $information = new lang_string('intensive_grade', $this->pluginname) .
                         " (" . date("d/m/y, H:i:s", $record->timemodified) . "): " .
-                        number_format($newcalification, 2, '.', '') . ". " .$information;
+                        number_format($newcalification, 2, '.', '') . "/ "
+                            . number_format($module->grademax, 2, '.', '') . ". " . $information;
                 // Update total course grade.
                 if ($newcalification > $actualcalification) {
                     $this->eude_update_course_grade($module->itemid, $module->courseid, $userid, $newcalification, $information);
+                }
+            } else {
+                $sql = "SELECT c.id
+                          FROM {course} c 
+                         WHERE c.shortname LIKE CONCAT('%.M', CONCAT('$shortname', '%'))";
+                $modules = $DB->get_records_sql($sql, array());
+                foreach ($modules as $module) {
+                    $sql = "SELECT gi.id
+                          FROM {grade_items} gi 
+                         WHERE gi.courseid = :courseid";
+                    $gradeitems = $DB->get_records_sql($sql, array('courseid' => $module->id));
+                   
+                    $information = new lang_string('intensive_grade', $this->pluginname) .
+                            " (" . date("d/m/y, H:i:s", $record->timemodified) . "): " .
+                            number_format($newcalification, 2, '.', '') . "/ "
+                            . number_format($module->grademax, 2, '.', '') . ". ";
+                    foreach ($gradeitems as $gradeitem) {
+                        if ($gradeitem->itemtype == 'course') {
+                            $this->eude_update_course_grade($gradeitem->id, $module->id, $userid, $newcalification, $information);
+                        } else {
+                            $this->eude_update_course_grade($gradeitem->id, $module->id, $userid, 0.00, $information);
+                        }
+                    }
+                    
                 }
             }
         }

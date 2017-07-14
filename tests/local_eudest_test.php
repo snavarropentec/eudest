@@ -399,6 +399,8 @@ class local_eudest_testcase extends advanced_testcase {
                 array('shortname' => 'CAT1.M.M03', 'category' => $category1->id));
         $course4 = $this->getDataGenerator()->create_course(
                 array('shortname' => 'CAT1.M.M04', 'category' => $category1->id));
+        $course5 = $this->getDataGenerator()->create_course(
+                array('shortname' => 'Old format course', 'category' => $category1->id));
 
         // Getting the id of the roles.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
@@ -412,6 +414,7 @@ class local_eudest_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user1->id, $course2->id, $studentrole->id, 'manual', $intensivestart, $intensiveend);
         $this->getDataGenerator()->enrol_user($user1->id, $course3->id, $studentrole->id, 'manual', $normalstart, $normalend);
         $this->getDataGenerator()->enrol_user($user1->id, $course4->id, $studentrole->id, 'manual', $normalstart, $normalend);
+        $this->getDataGenerator()->enrol_user($user1->id, $course5->id, $studentrole->id, 'manual', $normalstart, $normalend);
 
         // Get last enrolment id.
         $sql = 'SELECT id
@@ -435,10 +438,12 @@ class local_eudest_testcase extends advanced_testcase {
         $query = $DB->get_records('local_eudest_enrols', array('userid' => $user1->id));
         $this->assertCount(0, $query);
 
-        // Test2: Set lastid attribute = last enrolment -2 and check there are two enrolments processed.
+        // Test2: Set lastid attribute = last enrolment -3 and check there are two enrolments processed because.
+        // the last one doesn't have the proper format for encapsulation.
+
         $eudeconfig = new stdClass();
         $eudeconfig->id = 0;
-        $eudeconfig->last_enrolid = ($lastid->id) - 2;
+        $eudeconfig->last_enrolid = ($lastid->id) - 3;
         $eudeconfig->last_inactivity_date = 0;
         $eudeconfig->last_califications_date = 0;
 
@@ -1419,57 +1424,13 @@ class local_eudest_testcase extends advanced_testcase {
 
         // Setting the initial CFG parameter to allow convalidations.
         $CFG->local_eudest_convalidations = 1;
-/*
-$v1 = $DB->get_records('local_eudest_enrols', array());
-$v2 = $DB->get_records('grade_items', array());
-$v3 = $DB->get_records('grade_grades', array());
-var_dump($v1);
-var_dump($v2);
-var_dump($v3);
-$sql = "SELECT e. *, gi.id itemid
-FROM {local_eudest_enrols} e
-JOIN {grade_items} gi ON e.courseid = gi.courseid
-WHERE gi.itemtype = 'course'
-AND e.intensive = 0
-AND e.pend_convalidation = 1
-ORDER BY e.userid, e.startdate ASC";
-        $records = $DB->get_records_sql($sql, array());
-var_dump($records);
-foreach ($records as $record) {
-
-                // Check if user has enrolments in convalitable modules.
-                $cod = substr($record->shortname, strrpos($record->shortname, "["), strlen($record->shortname));
-
-                $sqlgrades = "SELECT gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
-                               FROM {grade_items} gi
-                               JOIN {grade_grades} gg on gg.itemid = gi.id
-                               JOIN {course} c on gi.courseid = c.id
-                              WHERE gi.itemtype = 'course'
-                                AND c.shortname like CONCAT('%', '$cod')
-                                AND gg.finalgrade is not null
-                                AND gg.userid = :userid
-                                AND gi.courseid != :courseid
-                           ORDER BY gi.grademax desc";
-                $grades = $DB->get_records_sql($sqlgrades,
-                        array('userid' => $record->userid,
-                    'courseid' => $record->courseid));
-                var_dump($grades);
-
-}
-
-
-*/
-
 
         // Testing the function when convalidation is allowed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
-$newgrades = $DB->get_records_sql($sqlgrade, array());
-var_dump($newgrades);
-
 
         // Test data of 'local_eudest_enrols' table.
         $expected = $DB->get_records('local_eudest_enrols');
-//var_dump($expected);
+
         $this->assertEquals(0, $expected[$identif + 1]->pend_convalidation);
         $this->assertEquals(0, $expected[$identif + 2]->pend_convalidation);
         $this->assertEquals(0, $expected[$identif + 4]->pend_convalidation);
