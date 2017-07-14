@@ -993,26 +993,24 @@ class local_eudest {
         if (!$doconvalidations) {
             return 0;
         }
-        
-        $sql = "SELECT e. *, gi.id itemid, gg.finalgrade
+
+        $sql = "SELECT e. *, gi.id itemid
                 FROM {local_eudest_enrols} e
                 JOIN {grade_items} gi ON e.courseid = gi.courseid
-                JOIN {grade_grades} gg ON gg.itemid = gi.id
-                WHERE e.userid = gg.userid
-                AND gi.itemtype = 'course'
+                WHERE gi.itemtype = 'course'
                 AND e.intensive = 0
+                AND e.pend_convalidation = 1
                 ORDER BY e.userid, e.startdate ASC";
         $records = $DB->get_records_sql($sql, array());
-        
+
         foreach ($records as $record) {
-            if ($DB->get_record('grade_grades', array('itemid' => $record->itemid))){
+            if ($DB->get_record('grade_grades', array('itemid' => $record->itemid))) {
                 $finalgrade = $DB->get_record('grade_grades', array('itemid' => $record->itemid, 'userid' => $record->userid));
             } else {
                 $finalgrade = null;
             }
-                    
-            if ($finalgrade === null) {
 
+            if ($finalgrade === null) {
                 // Check if user has enrolments in convalitable modules.
                 $cod = substr($record->shortname, strrpos($record->shortname, "["), strlen($record->shortname));
 

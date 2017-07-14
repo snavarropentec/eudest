@@ -1425,7 +1425,7 @@ $v2 = $DB->get_records('grade_items', array());
 $v3 = $DB->get_records('grade_grades', array());
 var_dump($v1);
 var_dump($v2);
-var_dump($v3);*/
+var_dump($v3);
 $sql = "SELECT e. *, gi.id itemid
 FROM {local_eudest_enrols} e
 JOIN {grade_items} gi ON e.courseid = gi.courseid
@@ -1458,7 +1458,7 @@ foreach ($records as $record) {
 }
 
 
-
+*/
 
 
         // Testing the function when convalidation is allowed.
