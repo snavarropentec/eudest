@@ -995,9 +995,9 @@ class local_eudest {
         }
         
         $sql = "SELECT e. *, gi.id itemid, gg.finalgrade
-                FROM mdl_local_eudest_enrols e
-                JOIN mdl_grade_items gi ON e.courseid = gi.courseid
-                JOIN mdl_grade_grades gg ON gg.itemid = gi.id
+                FROM {local_eudest_enrols} e
+                JOIN {grade_items} gi ON e.courseid = gi.courseid
+                JOIN {grade_grades} gg ON gg.itemid = gi.id
                 WHERE e.userid = gg.userid
                 AND gi.itemtype = 'course'
                 AND e.intensive = 0
