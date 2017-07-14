@@ -1425,7 +1425,7 @@ class local_eudest_testcase extends advanced_testcase {
 
         // Test data of 'local_eudest_enrols' table.
         $expected = $DB->get_records('local_eudest_enrols');
-
+var_dump($expected);
         $this->assertEquals(0, $expected[$identif + 1]->pend_convalidation);
         $this->assertEquals(0, $expected[$identif + 2]->pend_convalidation);
         $this->assertEquals(0, $expected[$identif + 4]->pend_convalidation);
