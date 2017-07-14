@@ -1420,14 +1420,15 @@ class local_eudest_testcase extends advanced_testcase {
         // Setting the initial CFG parameter to allow convalidations.
         $CFG->local_eudest_convalidations = 1;
         
-$sql = "SELECT e.*, gi.id itemid, gg.finalgrade
-                  FROM {local_eudest_enrols} e
-                  LEFT JOIN {grade_items} gi on e.courseid = gi.courseid
-                  LEFT JOIN {grade_grades} gg on gg.itemid = gi.id
-                 WHERE e.pend_convalidation = 1
-                   AND gi.itemtype = 'course'
-                   AND e.intensive = 0
-              ORDER BY e.userid, e.startdate ASC";
+$sql = "SELECT e. *, gi.id itemid, gg.finalgrade
+                FROM mdl_local_eudest_enrols e
+                JOIN mdl_grade_items gi ON e.courseid = gi.courseid
+                JOIN mdl_grade_grades gg ON gg.itemid = gi.id
+                WHERE e.userid = gg.userid
+                AND gi.itemtype = 'course'
+                AND e.intensive = 0
+                AND e.pend_convalidation = 1
+                ORDER BY e.userid, e.startdate ASC";
         $records = $DB->get_records_sql($sql, array());
 var_dump($records);
         // Testing the function when convalidation is allowed.
