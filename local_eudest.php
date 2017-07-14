@@ -1005,7 +1005,7 @@ class local_eudest {
         
         foreach ($records as $record) {
             if ($DB->get_record('grade_grades', array('itemid' => $record->itemid))){
-                $finalgrade = $DB->get_record('grade_grades', array('itemid' => $record->itemid))
+                $finalgrade = $DB->get_record('grade_grades', array('itemid' => $record->itemid));
             } else {
                 $finalgrade = null;
             }
