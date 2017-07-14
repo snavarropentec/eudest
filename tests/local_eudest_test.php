@@ -1442,6 +1442,7 @@ foreach ($records as $record) {
 
                 $sqlgrades = "SELECT gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
                                FROM {grade_items} gi
+                               JOIN {grade_grades} gg on gg.itemid = gi.id
                                JOIN {course} c on gi.courseid = c.id
                               WHERE gi.itemtype = 'course'
                                 AND c.shortname like CONCAT('%', '$cod')
