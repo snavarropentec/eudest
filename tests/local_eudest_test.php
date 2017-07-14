@@ -1268,7 +1268,7 @@ class local_eudest_testcase extends advanced_testcase {
         $record1->enddate = $enddate;
         $record1->pend_event = 1;
         $record1->pend_encapsulation = 1;
-        $record1->pend_convalidation = 0;
+        $record1->pend_convalidation = 1;
         $record1->intensive = 0;
         $record1->masterid = 0;
         $DB->insert_record('local_eudest_enrols', $record1);
@@ -1309,7 +1309,7 @@ class local_eudest_testcase extends advanced_testcase {
         $record4->enddate = $enddate;
         $record4->pend_event = 1;
         $record4->pend_encapsulation = 1;
-        $record4->pend_convalidation = 0;
+        $record4->pend_convalidation = 1;
         $record4->intensive = 0;
         $record4->masterid = 0;
         $DB->insert_record('local_eudest_enrols', $record4);
@@ -1335,7 +1335,7 @@ class local_eudest_testcase extends advanced_testcase {
         $record6->enddate = $enddate;
         $record6->pend_event = 1;
         $record6->pend_encapsulation = 1;
-        $record6->pend_convalidation = 0;
+        $record6->pend_convalidation = 1;
         $record6->intensive = 0;
         $record6->masterid = 0;
         $DB->insert_record('local_eudest_enrols', $record6);
@@ -1348,7 +1348,7 @@ class local_eudest_testcase extends advanced_testcase {
         $record7->enddate = $enddate;
         $record7->pend_event = 1;
         $record7->pend_encapsulation = 1;
-        $record7->pend_convalidation = 0;
+        $record7->pend_convalidation = 1;
         $record7->intensive = 0;
         $record7->masterid = 0;
         $DB->insert_record('local_eudest_enrols', $record7);
