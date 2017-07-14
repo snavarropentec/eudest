@@ -994,11 +994,13 @@ class local_eudest {
             return 0;
         }
 
-        $sql = "SELECT distinct(gi.id) uniqueid, e.*, gi.id itemid, gg.finalgrade
+        $sql = "SELECT e.*, gi.id itemid, gg.finalgrade
                   FROM {local_eudest_enrols} e
-                  LEFT JOIN {grade_items} gi on e.courseid = gi.courseid and itemtype='course'
+                  LEFT JOIN {grade_items} gi on e.courseid = gi.courseid
                   LEFT JOIN {grade_grades} gg on gg.itemid = gi.id
                  WHERE e.pend_convalidation = 1
+                   AND gi.itemtype = 'course'
+                   AND e.userid = gg.userid
                    AND e.intensive = 0
               ORDER BY e.userid, e.startdate ASC";
         $records = $DB->get_records_sql($sql, array());
