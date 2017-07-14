@@ -1232,13 +1232,13 @@ class local_eudest_testcase extends advanced_testcase {
 
         // Creating courses related to the categorie above.
         $course1mod1 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'Course 1[-Modulo 1-]', 'category' => $category1->id));
+                array('shortname' => 'CT1.M.CS1[-1-]', 'category' => $category1->id));
         $course2mod2 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'Course 2[-Modulo 2-]', 'category' => $category1->id));
+                array('shortname' => 'CT1.M.CS2[-2-]', 'category' => $category1->id));
         $course3mod1 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'Course 3[-Modulo 1-]', 'category' => $category1->id));
+                array('shortname' => 'CT1.M.CS3[-1-]', 'category' => $category1->id));
         $course4mod2 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'Course 4[-Modulo 2-]', 'category' => $category1->id));
+                array('shortname' => 'CT1.M.CS4[-2-]', 'category' => $category1->id));
 
         // Getting the id of the roles.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
@@ -1403,6 +1403,7 @@ class local_eudest_testcase extends advanced_testcase {
                        JOIN {course} c on gi.courseid = c.id
                       WHERE gi.itemtype = 'course'";
         $grades = $DB->get_records_sql($sqlgrade, array());
+        var_dump($grades);
         $this->assertCount(4, $grades);
 
         // Test data of 'local_eudest_enrols' table.
@@ -1420,7 +1421,7 @@ class local_eudest_testcase extends advanced_testcase {
         // Setting the initial CFG parameter to allow convalidations.
         $CFG->local_eudest_convalidations = 1;
         
-$sql = "SELECT e. *, gi.id itemid, gg.finalgrade
+$sql = "SELECT e.*, gi.id itemid, gg.finalgrade
                 FROM {local_eudest_enrols} e
                 JOIN {grade_items} gi ON e.courseid = gi.courseid
                 JOIN {grade_grades} gg ON gg.itemid = gi.id
@@ -1439,7 +1440,7 @@ var_dump($newgrades);
 
         // Test data of 'local_eudest_enrols' table.
         $expected = $DB->get_records('local_eudest_enrols');
-var_dump($expected);
+//var_dump($expected);
         $this->assertEquals(0, $expected[$identif + 1]->pend_convalidation);
         $this->assertEquals(0, $expected[$identif + 2]->pend_convalidation);
         $this->assertEquals(0, $expected[$identif + 4]->pend_convalidation);
