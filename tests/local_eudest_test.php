@@ -1403,7 +1403,6 @@ class local_eudest_testcase extends advanced_testcase {
                        JOIN {course} c on gi.courseid = c.id
                       WHERE gi.itemtype = 'course'";
         $grades = $DB->get_records_sql($sqlgrade, array());
-        var_dump($grades);
         $this->assertCount(4, $grades);
 
         // Test data of 'local_eudest_enrols' table.
@@ -1420,7 +1419,13 @@ class local_eudest_testcase extends advanced_testcase {
 
         // Setting the initial CFG parameter to allow convalidations.
         $CFG->local_eudest_convalidations = 1;
-        
+
+$v1 = $DB->get_records('local_eudest_enrols', array());
+$v2 = $DB->get_records('grade_items', array());
+$v3 = $DB->get_records('grade_grades', array());
+var_dump($v1);
+var_dump($v2);
+var_dump($v3);
 $sql = "SELECT e.*, gi.id itemid, gg.finalgrade
                 FROM {local_eudest_enrols} e
                 JOIN {grade_items} gi ON e.courseid = gi.courseid
