@@ -1426,12 +1426,10 @@ $v3 = $DB->get_records('grade_grades', array());
 var_dump($v1);
 var_dump($v2);
 var_dump($v3);
-$sql = "SELECT e.*, gi.id itemid, gg.finalgrade
+$sql = "SELECT e. *, gi.id itemid
                 FROM {local_eudest_enrols} e
                 JOIN {grade_items} gi ON e.courseid = gi.courseid
-                JOIN {grade_grades} gg ON gg.itemid = gi.id
-                WHERE e.userid = gg.userid
-                AND gi.itemtype = 'course'
+                WHERE gi.itemtype = 'course'
                 AND e.intensive = 0
                 AND e.pend_convalidation = 1
                 ORDER BY e.userid, e.startdate ASC";
