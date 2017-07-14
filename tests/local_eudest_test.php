@@ -1440,7 +1440,7 @@ foreach ($records as $record) {
                 // Check if user has enrolments in convalitable modules.
                 $cod = substr($record->shortname, strrpos($record->shortname, "["), strlen($record->shortname));
 
-                $sqlgrade = "SELECT gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
+                $sqlgrades = "SELECT gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
                                FROM {grade_items} gi
                                JOIN {grade_grades} gg on gg.itemid = gi.id
                                JOIN {course} c on gi.courseid = c.id
@@ -1450,7 +1450,7 @@ foreach ($records as $record) {
                                 AND gg.userid = :userid
                                 AND gi.courseid != :courseid
                            ORDER BY gi.grademax desc";
-                $grades = $DB->get_records_sql($sqlgrade,
+                $grades = $DB->get_records_sql($sqlgrades,
                         array('userid' => $record->userid,
                     'courseid' => $record->courseid));
                 var_dump($grades);
