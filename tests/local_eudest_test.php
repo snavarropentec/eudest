@@ -1424,57 +1424,7 @@ class local_eudest_testcase extends advanced_testcase {
 */
         // Setting the initial CFG parameter to allow convalidations.
         $CFG->local_eudest_convalidations = 1;
-/*
-        $sql = "SELECT distinct(e.id) uniqueid, e.*, gi.id itemid
-                FROM {local_eudest_enrols} e
-                JOIN {grade_items} gi ON e.courseid = gi.courseid
-                WHERE gi.itemtype = 'course'
-                AND e.intensive = 0
-                AND e.pend_convalidation = 1
-                ORDER BY e.userid, e.startdate ASC";
-        $records = $DB->get_records_sql($sql, array());
 
-        foreach ($records as $record) {
-            if ($DB->get_record('grade_grades', array('itemid' => $record->itemid, 'userid' => $record->userid))) {
-                $finalgrade = $DB->get_record('grade_grades', array('itemid' => $record->itemid, 'userid' => $record->userid));
-                echo "Con notas.".$finalgrade." **** ";
-                var_dump($finalgrade);
-            } else {
-                $finalgrade = null;
-                echo "Sin notas.";
-            }
-
-            if ($finalgrade === null) {
-                // Check if user has enrolments in convalitable modules.
-                $cod = substr($record->shortname, strrpos($record->shortname, "["), strlen($record->shortname));
-
-                $sqlgrades = "SELECT gg.id, gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
-                               FROM {grade_items} gi
-                               JOIN {grade_grades} gg on gg.itemid = gi.id
-                               JOIN {course} c on gi.courseid = c.id
-                              WHERE gi.itemtype = 'course'
-                                AND c.shortname like CONCAT('%', '$cod')
-                                AND gg.finalgrade is not null
-                                AND gg.userid = :userid
-                                AND gi.courseid != :courseid
-                           ORDER BY gi.grademax desc";
-                $grades = $DB->get_records_sql($sqlgrades,
-                        array('userid' => $record->userid,
-                    'courseid' => $record->courseid));
-                echo " <-> ";
-                foreach ($grades as $grade) {
-                    $maxgrade = $grade->finalgrade;
-                    echo " ++++ Prepare convalidation (".$maxgrade.") ++++ ";
-                    // Update grade value.
-                    if ($record->itemid != null) {
-                        echo "convalidation: ".$maxgrade;
-                    }
-
-                }
-            }
-            echo " ---- Pendiente convalidación a cero y update ---- ";
-        }
-*/
         // Testing the function when convalidation is allowed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
 
