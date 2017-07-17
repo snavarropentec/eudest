@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -886,8 +887,7 @@ class local_eudest {
                     }
                     // Notice user.
                     if ($noticeuseroninactivity24) {
-                        $this->eude_add_message_to_stack(
-                                $record->categoryid, $record->userid, "", $this->msgtypeuserlocked, $today);
+                        $this->eude_add_message_to_stack($record->categoryid, $record->userid, "", $this->msgtypeuserlocked, $today);
                     }
                 }
             }
@@ -932,7 +932,6 @@ class local_eudest {
                   AND upper(GC.shortname) LIKE CONCAT('$intensivetag', '.%')
              ORDER BY GG.timemodified asc";
         $records = $DB->get_records_sql($sql, array("lastcheck" => $lastcheck));
-
         foreach ($records as $record) {
             // Get new grade value.
             $newcalification = $record->finalgrade;
@@ -948,48 +947,53 @@ class local_eudest {
                      WHERE gi.itemtype = 'course'
                        AND gg.userid = :userid
                        AND shortname LIKE CONCAT('%.M', CONCAT('$shortname', '%'))";
-            $module = $DB->get_record_sql($sql2, array("userid" => $userid));
+            $modules = $DB->get_records_sql($sql2, array("userid" => $userid));
+
             $actualcalification = 0;
             $information = "";
-            if ($module) {
-                $actualcalification = $module->finalgrade;
-                $information = $module->information;
+            if ($modules) {
+                foreach ($modules as $module) {
+                    $actualcalification = $module->finalgrade;
+                    $information = $module->information;
 
-                if ($information == null || $information == "") {
-                    $information = new lang_string('normal_grade', $this->pluginname) .
-                            ": " . number_format($actualcalification, 2, '.', '') . "/ "
-                            . number_format($module->grademax, 2, '.', '') . ".";
-                }
-                $information = new lang_string('intensive_grade', $this->pluginname) .
-                        " (" . date("d/m/y, H:i:s", $record->timemodified) . "): " .
-                        number_format($newcalification, 2, '.', '') . "/ "
+                    if ($information == null || $information == "") {
+                        $information = new lang_string('normal_grade', $this->pluginname) .
+                                ": " . number_format($actualcalification, 2, '.', '') . "/ "
+                                . number_format($module->grademax, 2, '.', '') . ".";
+                    }
+                    $information = new lang_string('intensive_grade', $this->pluginname) .
+                            " (" . date("d/m/y, H:i:s", $record->timemodified) . "): " .
+                            number_format($newcalification, 2, '.', '') . "/ "
                             . number_format($module->grademax, 2, '.', '') . ". " . $information;
-                // Update total course grade.
-                if ($newcalification > $actualcalification) {
-                    $this->eude_update_course_grade($module->itemid, $module->courseid, $userid, $newcalification, $information);
+                    // Update total course grade.
+                    if ($newcalification > $actualcalification) {
+                        $this->eude_update_course_grade($module->itemid, $module->courseid, $userid, $newcalification, $information);
+                    }
                 }
             } else {
                 $sql = "SELECT c.id
                           FROM {course} c
                          WHERE c.shortname LIKE CONCAT('%.M', CONCAT('$shortname', '%'))";
-                $modules = $DB->get_records_sql($sql, array());
-                foreach ($modules as $module) {
-                    $sql = "SELECT gi.id
+                $modules2 = $DB->get_records_sql($sql, array());
+
+                foreach ($modules2 as $module) {
+                    $sql = "SELECT gi.id, gi.grademax
                           FROM {grade_items} gi
                          WHERE gi.courseid = :courseid";
                     $gradeitems = $DB->get_records_sql($sql, array('courseid' => $module->id));
 
-                    $information = new lang_string('intensive_grade', $this->pluginname) .
-                            " (" . date("d/m/y, H:i:s", $record->timemodified) . "): " .
-                            number_format($newcalification, 2, '.', '') . "/ "
-                            . number_format($module->grademax, 2, '.', '') . ". ";
                     foreach ($gradeitems as $gradeitem) {
-                        if ($gradeitem->itemtype == 'course') {
-                            $this->eude_update_course_grade($gradeitem->id, $module->id, $userid, $newcalification, $information);
-                        } else {
-                            $this->eude_update_course_grade($gradeitem->id, $module->id, $userid, 0.00, $information);
-                        }
+                        $information = new lang_string('intensive_grade', $this->pluginname) .
+                                " (" . date("d/m/y, H:i:s", $record->timemodified) . "): " .
+                                number_format($newcalification, 2, '.', '') . "/ "
+                                . number_format($gradeitem->grademax, 2, '.', '') . ". ";
+                        $this->eude_update_course_grade($gradeitem->id, $module->id, $userid, $newcalification, $information);
                     }
+
+                    $studentvaldata = $DB->get_record('role', array('shortname' => 'studentval'));
+                    $studentdata = $DB->get_record('role', array('shortname' => 'student'));
+                    $coursecontextdata = context_course::instance($module->courseid);
+                    role_assign($studentvaldata->id, $record->userid, $coursecontextdata->id);
                 }
             }
         }
@@ -1047,8 +1051,7 @@ class local_eudest {
                                     AND gi.courseid != :courseid
                                ORDER BY gg.finalgrade desc
                                LIMIT 1";
-                    $grades = $DB->get_record_sql($sqlgrade,
-                            array('userid' => $enrol->userid, 'courseid' => $enrol->courseid));
+                    $grades = $DB->get_record_sql($sqlgrade, array('userid' => $enrol->userid, 'courseid' => $enrol->courseid));
                     $maxgrade = $grades->finalgrade;
                     // Update grade value.
                     $this->eude_update_course_grade($record->id, $enrol->courseid, $grades->userid, $maxgrade, "convalidation");
