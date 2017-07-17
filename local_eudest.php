@@ -1042,7 +1042,7 @@ class local_eudest {
 
                 if ($finalgrade === null) {
                     // Check if user has enrolments in convalitable modules.
-                    $cod = substr($record->shortname, strrpos($record->shortname, "["), strlen($record->shortname));
+                    $cod = substr($enrol->shortname, strrpos($enrol->shortname, "["), strlen($enrol->shortname));
 
                     $sqlgrade = "SELECT gg.id, gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
                                    FROM {grade_items} gi
@@ -1056,12 +1056,12 @@ class local_eudest {
                                ORDER BY gg.finalgrade desc
                                LIMIT 1";
                     $grades = $DB->get_record_sql($sqlgrade,
-                            array('userid' => $record->userid, 'courseid' => $record->courseid));
+                            array('userid' => $enrol->userid, 'courseid' => $enrol->courseid));
                     //foreach ($grades as $grade) {
                         $maxgrade = $grades->finalgrade;
                         // Update grade value.
                         if ($record->itemid != null) {
-                            $this->eude_update_course_grade($record->itemid, $record->courseid, $record->userid, $maxgrade,
+                            $this->eude_update_course_grade($record->itemid, $enrol->courseid, $enrol->userid, $maxgrade,
                                 "convalidation");
                         }
                         //break;
