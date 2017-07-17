@@ -1060,8 +1060,8 @@ class local_eudest {
                     //foreach ($grades as $grade) {
                         $maxgrade = $grades->finalgrade;
                         // Update grade value.
-                        if ($record->itemid != null) {
-                            $this->eude_update_course_grade($record->itemid, $enrol->courseid, $enrol->userid, $maxgrade,
+                        if ($record->id != null) {
+                            $this->eude_update_course_grade($record->id, $enrol->courseid, $enrol->userid, $maxgrade,
                                 "convalidation");
                         }
                         //break;
