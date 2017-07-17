@@ -1424,6 +1424,16 @@ class local_eudest_testcase extends advanced_testcase {
 
         // Setting the initial CFG parameter to allow convalidations.
         $CFG->local_eudest_convalidations = 1;
+        
+        $sql = "SELECT e. *, gi.id itemid
+                FROM {local_eudest_enrols} e
+                JOIN {grade_items} gi ON e.courseid = gi.courseid
+                WHERE gi.itemtype = 'course'
+                AND e.intensive = 0
+                AND e.pend_convalidation = 1
+                ORDER BY e.userid, e.startdate ASC";
+        $records = $DB->get_records_sql($sql, array());
+        var_dump($records);
 
         // Testing the function when convalidation is allowed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
