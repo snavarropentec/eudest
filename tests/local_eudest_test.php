@@ -1437,7 +1437,7 @@ class local_eudest_testcase extends advanced_testcase {
         foreach ($records as $record) {
             if ($DB->get_record('grade_grades', array('itemid' => $record->itemid))) {
                 $finalgrade = $DB->get_record('grade_grades', array('itemid' => $record->itemid, 'userid' => $record->userid));
-                echo "Con notas.";
+                echo "Con notas.".$finalgrade." **** ";
             } else {
                 $finalgrade = null;
                 echo "Sin notas.";
