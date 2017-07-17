@@ -1050,20 +1050,18 @@ class local_eudest {
                                 AND gg.finalgrade is not null
                                 AND gg.userid = :userid
                                 AND gi.courseid != :courseid
-                           ORDER BY gi.grademax desc";
+                           ORDER BY gi.grademax desc
+                           LIMIT 1";
                 $grades = $DB->get_records_sql($sqlgrade,
                         array('userid' => $record->userid,
                     'courseid' => $record->courseid));
 
-                foreach ($grades as $grade) {
-                    $maxgrade = $grade->finalgrade;
-                    // Update grade value.
+
                     if ($record->itemid != null) {
-                        $this->eude_update_course_grade($record->itemid, $record->courseid, $record->userid, $maxgrade,
+                        $this->eude_update_course_grade($record->itemid, $record->courseid, $record->userid, $grade->finalgrade,
                                 "convalidation");
                     }
-                    //break;
-                }
+   
             }
 
             $record->pend_convalidation = 0;

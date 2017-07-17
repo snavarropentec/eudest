@@ -1437,8 +1437,10 @@ class local_eudest_testcase extends advanced_testcase {
         foreach ($records as $record) {
             if ($DB->get_record('grade_grades', array('itemid' => $record->itemid))) {
                 $finalgrade = $DB->get_record('grade_grades', array('itemid' => $record->itemid, 'userid' => $record->userid));
+                echo "Con notas.";
             } else {
                 $finalgrade = null;
+                echo "Sin notas.";
             }
 
             if ($finalgrade === null) {
@@ -1458,20 +1460,18 @@ class local_eudest_testcase extends advanced_testcase {
                 $grades = $DB->get_records_sql($sqlgrades,
                         array('userid' => $record->userid,
                     'courseid' => $record->courseid));
-                var_dump($grades);
-                echo "<->";
+                echo " <-> ";
                 foreach ($grades as $grade) {
                     $maxgrade = $grade->finalgrade;
-                    echo "Prepare convalidation (".$maxgrade.")";
-                    var_dump($record);
+                    echo " ++++ Prepare convalidation (".$maxgrade.") ++++ ";
                     // Update grade value.
                     if ($record->itemid != null) {
                         echo "convalidation: ".$maxgrade;
                     }
-                    break;
+
                 }
             }
-            echo "Pendiente convalidación a cero y update<br>";
+            echo " ---- Pendiente convalidación a cero y update ---- ";
         }
 
         // Testing the function when convalidation is allowed.
