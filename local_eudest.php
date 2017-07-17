@@ -1022,7 +1022,7 @@ class local_eudest {
             return 0;
         }
 
-        $sql = "SELECT e.*, gi.id itemid
+        $sql = "SELECT distinct(e.id) uniqueid, e.*, gi.id itemid
                 FROM {local_eudest_enrols} e
                 JOIN {grade_items} gi ON e.courseid = gi.courseid
                 WHERE gi.itemtype = 'course'
