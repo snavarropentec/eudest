@@ -911,7 +911,7 @@ class local_eudest {
     private function eude_override_califications () {
         global $CFG;
         global $DB;
-var_dump($this);
+
         // Get grades configuration.
         $overridecalifications = $CFG->local_eudest_override;
         if (!$overridecalifications) {
@@ -1016,7 +1016,7 @@ var_dump($this);
     private function eude_convalidate_modules () {
         global $CFG;
         global $DB;
-var_dump($this);
+
         // Get convalidations configuration.
         $doconvalidations = $CFG->local_eudest_convalidations;
         if (!$doconvalidations) {
@@ -1051,9 +1051,7 @@ var_dump($this);
                             array('userid' => $enrol->userid, 'courseid' => $enrol->courseid));
                     $maxgrade = $grades->finalgrade;
                     // Update grade value.
-                    //if ($grades->itemid != null) {
-                        $this->eude_update_course_grade($record->id, $record->courseid, $grades->userid, $maxgrade, "convalidation");
-                    //}
+                    //$this->eude_update_course_grade($record->id, $enrol->courseid, $grades->userid, $maxgrade, "convalidation");
                 }
                 $record->pend_convalidation = 0;
                 $DB->update_record('local_eudest_enrols', $record);
