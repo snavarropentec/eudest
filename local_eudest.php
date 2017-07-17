@@ -911,7 +911,7 @@ class local_eudest {
     private function eude_override_califications () {
         global $CFG;
         global $DB;
-
+var_dump($this);
         // Get grades configuration.
         $overridecalifications = $CFG->local_eudest_override;
         if (!$overridecalifications) {
@@ -1016,6 +1016,7 @@ class local_eudest {
     private function eude_convalidate_modules () {
         global $CFG;
         global $DB;
+var_dump($this);
         // Get convalidations configuration.
         $doconvalidations = $CFG->local_eudest_convalidations;
         if (!$doconvalidations) {
