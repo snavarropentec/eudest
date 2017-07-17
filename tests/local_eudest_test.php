@@ -1415,7 +1415,7 @@ class local_eudest_testcase extends advanced_testcase {
         $this->assertEquals(1, $enrols[$identif + 1]->pend_convalidation);
         $this->assertEquals(1, $enrols[$identif + 2]->pend_convalidation);
         $this->assertEquals(1, $enrols[$identif + 4]->pend_convalidation);
-
+/*
         // Testing the function when convalidation is not allowed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
 
@@ -1453,7 +1453,7 @@ class local_eudest_testcase extends advanced_testcase {
                     'courseid' => $record->courseid));
                 var_dump($grades);
         }
-
+*/
         // Testing the function when convalidation is allowed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
 
