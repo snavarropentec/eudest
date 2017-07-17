@@ -1435,15 +1435,7 @@ class local_eudest_testcase extends advanced_testcase {
         $records = $DB->get_records_sql($sql, array());
 
         foreach ($records as $record) {
-            if ($DB->get_record('grade_grades', array('itemid' => $record->itemid))) {
-                $finalgrade = $DB->get_record('grade_grades', array('itemid' => $record->itemid, 'userid' => $record->userid));
-                echo "Con notas.".$finalgrade." **** ";
-            } else {
-                $finalgrade = null;
-                echo "Sin notas.";
-            }
 
-            if ($finalgrade === null) {
                 // Check if user has enrolments in convalitable modules.
                 $cod = substr($record->shortname, strrpos($record->shortname, "["), strlen($record->shortname));
 
@@ -1470,7 +1462,7 @@ class local_eudest_testcase extends advanced_testcase {
                     }
 
                 }
-            }
+
             echo " ---- Pendiente convalidación a cero y update ---- ";
         }
 

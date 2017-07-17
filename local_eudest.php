@@ -1031,13 +1031,13 @@ class local_eudest {
                 ORDER BY e.userid, e.startdate ASC";
         $records = $DB->get_records_sql($sql, array());
         foreach ($records as $record) {
-            if ($DB->get_record('grade_grades', array('itemid' => $record->itemid))) {
+           /* if ($DB->get_record('grade_grades', array('itemid' => $record->itemid))) {
                 $finalgrade = $DB->get_record('grade_grades', array('itemid' => $record->itemid, 'userid' => $record->userid));
             } else {
                 $finalgrade = null;
             }
-
-            if ($finalgrade === null) {
+*/
+  //          if ($finalgrade === null) {
                 // Check if user has enrolments in convalitable modules.
                 $cod = substr($record->shortname, strrpos($record->shortname, "["), strlen($record->shortname));
 
@@ -1059,7 +1059,7 @@ class local_eudest {
                     $this->eude_update_course_grade($record->itemid, $record->courseid, $record->userid, $grade->finalgrade,
                             "convalidation");
                 }
-            }
+    //        }
             $record->pend_convalidation = 0;
             $DB->update_record('local_eudest_enrols', $record);
         }
