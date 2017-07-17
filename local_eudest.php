@@ -1026,7 +1026,7 @@ class local_eudest {
         foreach ($enrols as $enrol) {
             $records = $DB->get_records('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid));
             foreach ($records as $record) {
-                if ($DB->get_record('grade_grades', array('itemid' => $record->id, 'userid' => $enrol->userid))) {
+                if ($DB->get_records('grade_grades', array('itemid' => $record->id, 'userid' => $enrol->userid))) {
                     $finalgrade = $DB->get_record('grade_grades', array('itemid' => $record->itemid, 'userid' => $enrol->userid));
                 } else {
                     $finalgrade = null;
@@ -1051,8 +1051,7 @@ class local_eudest {
                             array('userid' => $enrol->userid, 'courseid' => $enrol->courseid));
                     $maxgrade = $grades->finalgrade;
                     // Update grade value.
-                    $gradeitem = new grade_item(array('id' => $record->id, 'courseid' => $enrol->courseid));
-                    $gradeitem->update_final_grade(intval($grades->userid), $maxgrade, null, format_string("convalidation"));
+                    $this->eude_update_course_grade($record->id, $enrol->courseid, $grades->userid, $maxgrade, "convalidation");
                 }
                 $enrol->pend_convalidation = 0;
                 $DB->update_record('local_eudest_enrols', $enrol);
