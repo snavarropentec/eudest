@@ -1051,6 +1051,7 @@ class local_eudest {
                     $maxgrade = $grades->finalgrade;
                     // Update grade value.
                     if ($grades->itemid != null) {
+                        var_dump($this);
                         $this->eude_update_course_grade($record->id, $record->courseid, $grades->userid, $maxgrade, "convalidation");
                     }
                 }
