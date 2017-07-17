@@ -1023,7 +1023,7 @@ class local_eudest {
             return 0;
         }
 
-        $sql = "SELECT e. *, gi.id itemid
+        $sql = "SELECT e.*, gi.id itemid
                 FROM {local_eudest_enrols} e
                 JOIN {grade_items} gi ON e.courseid = gi.courseid
                 WHERE gi.itemtype = 'course'
@@ -1031,7 +1031,6 @@ class local_eudest {
                 AND e.pend_convalidation = 1
                 ORDER BY e.userid, e.startdate ASC";
         $records = $DB->get_records_sql($sql, array());
-
         foreach ($records as $record) {
             if ($DB->get_record('grade_grades', array('itemid' => $record->itemid))) {
                 $finalgrade = $DB->get_record('grade_grades', array('itemid' => $record->itemid, 'userid' => $record->userid));
