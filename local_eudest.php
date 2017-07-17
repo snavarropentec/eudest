@@ -1021,15 +1021,6 @@ class local_eudest {
         if (!$doconvalidations) {
             return 0;
         }
-/*
-        $sql = "SELECT distinct(e.id) uniqueid, e.*, gi.id itemid
-                FROM {local_eudest_enrols} e
-                JOIN {grade_items} gi ON e.courseid = gi.courseid
-                WHERE gi.itemtype = 'course'
-                AND e.intensive = 0
-                AND e.pend_convalidation = 1
-                ORDER BY e.userid, e.startdate ASC";
-        $records = $DB->get_records_sql($sql, array());*/
         $enrols = $DB->get_records('local_eudest_enrols', array('intensive' => 0, 'pend_convalidation' => 1));
         foreach ($enrols as $enrol) {
             $records = $DB->get_records('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid));
@@ -1057,15 +1048,12 @@ class local_eudest {
                                LIMIT 1";
                     $grades = $DB->get_record_sql($sqlgrade,
                             array('userid' => $enrol->userid, 'courseid' => $enrol->courseid));
-                    //foreach ($grades as $grade) {
-                        $maxgrade = $grades->finalgrade;
-                        // Update grade value.
-                        if ($record->id != null) {
-                            $this->eude_update_course_grade($record->id, $enrol->courseid, $enrol->userid, $maxgrade,
-                                "convalidation");
-                        }
-                        //break;
-                    //}
+                    $maxgrade = $grades->finalgrade;
+                    // Update grade value.
+                    if ($grades->itemid != null) {
+                        $this->eude_update_course_grade($record->id, $enrol->courseid, $enrol->userid, $maxgrade,
+                            "convalidation");
+                    }
                 }
                 $record->pend_convalidation = 0;
                 $DB->update_record('local_eudest_enrols', $record);
