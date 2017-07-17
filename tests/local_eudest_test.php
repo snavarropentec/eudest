@@ -1433,12 +1433,19 @@ class local_eudest_testcase extends advanced_testcase {
                 AND e.pend_convalidation = 1
                 ORDER BY e.userid, e.startdate ASC";
         $records = $DB->get_records_sql($sql, array());
-        var_dump($records);
+
         foreach ($records as $record) {
+            if ($DB->get_record('grade_grades', array('itemid' => $record->itemid))) {
+                $finalgrade = $DB->get_record('grade_grades', array('itemid' => $record->itemid, 'userid' => $record->userid));
+            } else {
+                $finalgrade = null;
+            }
+
+            if ($finalgrade === null) {
                 // Check if user has enrolments in convalitable modules.
                 $cod = substr($record->shortname, strrpos($record->shortname, "["), strlen($record->shortname));
 
-                $sqlgrades = "SELECT gg.id, gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
+                $sqlgrade = "SELECT gg.id, gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
                                FROM {grade_items} gi
                                JOIN {grade_grades} gg on gg.itemid = gi.id
                                JOIN {course} c on gi.courseid = c.id
@@ -1448,10 +1455,20 @@ class local_eudest_testcase extends advanced_testcase {
                                 AND gg.userid = :userid
                                 AND gi.courseid != :courseid
                            ORDER BY gi.grademax desc";
-                $grades = $DB->get_records_sql($sqlgrades,
+                $grades = $DB->get_records_sql($sqlgrade,
                         array('userid' => $record->userid,
                     'courseid' => $record->courseid));
-                var_dump($grades);
+
+                foreach ($grades as $grade) {
+                    $maxgrade = $grade->finalgrade;
+                    // Update grade value.
+                    if ($record->itemid != null) {
+                        echo "convalidation: ".$maxgrade;
+                        
+                    }
+                    break;
+                }
+            }
         }
 
         // Testing the function when convalidation is allowed.
