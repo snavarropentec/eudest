@@ -1461,6 +1461,7 @@ class local_eudest_testcase extends advanced_testcase {
 
                 foreach ($grades as $grade) {
                     $maxgrade = $grade->finalgrade;
+                    echo "Prepare convalidation (".$maxgrade.")";
                     // Update grade value.
                     if ($record->itemid != null) {
                         echo "convalidation: ".$maxgrade;
