@@ -32,7 +32,7 @@ require_once($CFG->libdir . '/gradelib.php');
 /**
  * Schedule task for doin EUDE processes.
  *
- * @copyright  2016 PlanificaciÃ³n Entornos TecnolÃ³gicos {@link http://www.pentec.es/}
+ * @copyright  2016 Planificación Entornos Tecnológicos {@link http://www.pentec.es/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_eudest {
@@ -1050,10 +1050,9 @@ class local_eudest {
                             array('userid' => $enrol->userid, 'courseid' => $enrol->courseid));
                     $maxgrade = $grades->finalgrade;
                     // Update grade value.
-                    if ($grades->itemid != null) {
-                        var_dump($this);
+                    //if ($grades->itemid != null) {
                         $this->eude_update_course_grade($record->id, $record->courseid, $grades->userid, $maxgrade, "convalidation");
-                    }
+                    //}
                 }
                 $record->pend_convalidation = 0;
                 $DB->update_record('local_eudest_enrols', $record);

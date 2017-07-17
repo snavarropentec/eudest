@@ -1217,7 +1217,7 @@ class local_eudest_testcase extends advanced_testcase {
         global $DB;
         global $CFG;
         $this->resetAfterTest(true);
-        var_dump($this);
+
         // Creating a instance of the local_eudest class.
         $instance1 = new local_eudest();
 
