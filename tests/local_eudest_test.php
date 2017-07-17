@@ -1438,7 +1438,7 @@ class local_eudest_testcase extends advanced_testcase {
                 // Check if user has enrolments in convalitable modules.
                 $cod = substr($record->shortname, strrpos($record->shortname, "["), strlen($record->shortname));
 
-                $sqlgrade = "SELECT gg.id, gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
+                $sqlgrades = "SELECT gg.id, gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
                                FROM {grade_items} gi
                                JOIN {grade_grades} gg on gg.itemid = gi.id
                                JOIN {course} c on gi.courseid = c.id
@@ -1448,7 +1448,7 @@ class local_eudest_testcase extends advanced_testcase {
                                 AND gg.userid = :userid
                                 AND gi.courseid != :courseid
                            ORDER BY gi.grademax desc";
-                $grades = $DB->get_records_sql($sqlgrade,
+                $grades = $DB->get_records_sql($sqlgrades,
                         array('userid' => $record->userid,
                     'courseid' => $record->courseid));
                 var_dump($grades);
