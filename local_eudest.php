@@ -1061,7 +1061,7 @@ class local_eudest {
                         $this->eude_update_course_grade($record->itemid, $record->courseid, $record->userid, $maxgrade,
                             "convalidation");
                     }
-                    break;
+                    //break;
                 //}
             }
             $record->pend_convalidation = 0;
