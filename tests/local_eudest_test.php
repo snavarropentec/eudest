@@ -1217,7 +1217,7 @@ class local_eudest_testcase extends advanced_testcase {
         global $DB;
         global $CFG;
         $this->resetAfterTest(true);
-
+        var_dump($this);
         // Creating a instance of the local_eudest class.
         $instance1 = new local_eudest();
 
@@ -1225,8 +1225,8 @@ class local_eudest_testcase extends advanced_testcase {
         $CFG->local_eudest_convalidations = 0;
 
         // Testing with the setting not allowing the modifications.
-        //$result = $this->invoke_method($instance1, 'eude_convalidate_modules', array());
-        //$this->assertEquals(0, $result);
+        $result = $this->invoke_method($instance1, 'eude_convalidate_modules', array());
+        $this->assertEquals(0, $result);
 
         // Creating a few users.
         $user1 = $this->getDataGenerator()->create_user(array('username' => 'user1', 'email' => 'user1@php.com'));
@@ -1415,13 +1415,13 @@ class local_eudest_testcase extends advanced_testcase {
         $this->assertEquals(1, $enrols[$identif + 1]->pend_convalidation);
         $this->assertEquals(1, $enrols[$identif + 2]->pend_convalidation);
         $this->assertEquals(1, $enrols[$identif + 4]->pend_convalidation);
-/*
+
         // Testing the function when convalidation is not allowed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
 
         $othergrades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(4, $othergrades);
-*/
+
         // Setting the initial CFG parameter to allow convalidations.
         $CFG->local_eudest_convalidations = 1;
 
