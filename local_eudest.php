@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -887,7 +886,8 @@ class local_eudest {
                     }
                     // Notice user.
                     if ($noticeuseroninactivity24) {
-                        $this->eude_add_message_to_stack($record->categoryid, $record->userid, "", $this->msgtypeuserlocked, $today);
+                        $this->eude_add_message_to_stack(
+                                $record->categoryid, $record->userid, "", $this->msgtypeuserlocked, $today);
                     }
                 }
             }
@@ -970,15 +970,15 @@ class local_eudest {
                 }
             } else {
                 $sql = "SELECT c.id
-                          FROM {course} c 
+                          FROM {course} c
                          WHERE c.shortname LIKE CONCAT('%.M', CONCAT('$shortname', '%'))";
                 $modules = $DB->get_records_sql($sql, array());
                 foreach ($modules as $module) {
                     $sql = "SELECT gi.id
-                          FROM {grade_items} gi 
+                          FROM {grade_items} gi
                          WHERE gi.courseid = :courseid";
                     $gradeitems = $DB->get_records_sql($sql, array('courseid' => $module->id));
-                   
+
                     $information = new lang_string('intensive_grade', $this->pluginname) .
                             " (" . date("d/m/y, H:i:s", $record->timemodified) . "): " .
                             number_format($newcalification, 2, '.', '') . "/ "
@@ -990,7 +990,6 @@ class local_eudest {
                             $this->eude_update_course_grade($gradeitem->id, $module->id, $userid, 0.00, $information);
                         }
                     }
-                    
                 }
             }
         }
@@ -1042,7 +1041,7 @@ class local_eudest {
                 // Check if user has enrolments in convalitable modules.
                 $cod = substr($record->shortname, strrpos($record->shortname, "["), strlen($record->shortname));
 
-                $sqlgrade = "SELECT gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
+                $sqlgrade = "SELECT gg.id, gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
                                FROM {grade_items} gi
                                JOIN {grade_grades} gg on gg.itemid = gi.id
                                JOIN {course} c on gi.courseid = c.id

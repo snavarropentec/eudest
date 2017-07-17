@@ -1421,10 +1421,10 @@ class local_eudest_testcase extends advanced_testcase {
 
         $othergrades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(4, $othergrades);
-
+*/
         // Setting the initial CFG parameter to allow convalidations.
         $CFG->local_eudest_convalidations = 1;
-        
+
         $sql = "SELECT e.*, gi.id itemid
                 FROM {local_eudest_enrols} e
                 JOIN {grade_items} gi ON e.courseid = gi.courseid
@@ -1438,7 +1438,7 @@ class local_eudest_testcase extends advanced_testcase {
                 // Check if user has enrolments in convalitable modules.
                 $cod = substr($record->shortname, strrpos($record->shortname, "["), strlen($record->shortname));
 
-                $sqlgrade = "SELECT gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
+                $sqlgrade = "SELECT gg.id, gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
                                FROM {grade_items} gi
                                JOIN {grade_grades} gg on gg.itemid = gi.id
                                JOIN {course} c on gi.courseid = c.id
@@ -1453,7 +1453,7 @@ class local_eudest_testcase extends advanced_testcase {
                     'courseid' => $record->courseid));
                 var_dump($grades);
         }
-*/
+
         // Testing the function when convalidation is allowed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
 
