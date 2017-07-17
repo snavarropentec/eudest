@@ -1056,8 +1056,8 @@ class local_eudest {
                     // Update grade value.
                     //$this->eude_update_course_grade($record->id, $enrol->courseid, $grades->userid, $maxgrade, "convalidation");
                 }
-                $record->pend_convalidation = 0;
-                $DB->update_record('local_eudest_enrols', $record);
+                $enrol->pend_convalidation = 0;
+                $DB->update_record('local_eudest_enrols', $enrol);
             }
         }
     }
