@@ -1054,15 +1054,15 @@ class local_eudest {
                            LIMIT 1";
                 $grades = $DB->get_record_sql($sqlgrade,
                         array('userid' => $record->userid, 'courseid' => $record->courseid));
-                foreach ($grades as $grade) {
-                    $maxgrade = $grade->finalgrade;
+                //foreach ($grades as $grade) {
+                    $maxgrade = $grades->finalgrade;
                     // Update grade value.
                     if ($record->itemid != null) {
                         $this->eude_update_course_grade($record->itemid, $record->courseid, $record->userid, $maxgrade,
                             "convalidation");
                     }
                     break;
-                }
+                //}
             }
             $record->pend_convalidation = 0;
             $DB->update_record('local_eudest_enrols', $record);
