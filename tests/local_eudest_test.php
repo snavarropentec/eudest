@@ -1444,7 +1444,7 @@ class local_eudest_testcase extends advanced_testcase {
                 echo "Sin notas.";
             }
 
-            //if ($finalgrade === null) {
+            if ($finalgrade === null) {
                 // Check if user has enrolments in convalitable modules.
                 $cod = substr($record->shortname, strrpos($record->shortname, "["), strlen($record->shortname));
 
@@ -1471,7 +1471,7 @@ class local_eudest_testcase extends advanced_testcase {
                     }
 
                 }
-            //}
+            }
             echo " ---- Pendiente convalidación a cero y update ---- ";
         }
 

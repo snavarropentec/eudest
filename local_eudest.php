@@ -1056,10 +1056,12 @@ class local_eudest {
                         array('userid' => $record->userid, 'courseid' => $record->courseid));
                 foreach ($grades as $grade) {
                     $maxgrade = $grade->finalgrade;
+                    // Update grade value.
                     if ($record->itemid != null) {
                         $this->eude_update_course_grade($record->itemid, $record->courseid, $record->userid, $grades->finalgrade,
                             "convalidation");
                     }
+                    break;
                 }
             }
             $record->pend_convalidation = 0;
