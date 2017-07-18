@@ -1391,19 +1391,19 @@ class local_eudest_testcase extends advanced_testcase {
         $DB->insert_record('local_eudest_enrols', $record9);
 
         // Creating grade_categories for the courses.
-        $this->getDataGenerator()->create_grade_category(
+        $grade1 = $this->getDataGenerator()->create_grade_category(
                 array('courseid' => $course1mod1->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
-        $this->getDataGenerator()->create_grade_category(
+        $grade2 = $this->getDataGenerator()->create_grade_category(
                 array('courseid' => $course2mod2->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
-        $this->getDataGenerator()->create_grade_category(
+        $grade3 = $this->getDataGenerator()->create_grade_category(
                 array('courseid' => $course3mod1->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
-        $this->getDataGenerator()->create_grade_category(
+        $grade4 = $this->getDataGenerator()->create_grade_category(
                 array('courseid' => $course4mod2->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
-        $this->getDataGenerator()->create_grade_category(
+        $grade5 = $this->getDataGenerator()->create_grade_category(
                 array('courseid' => $course5mod3->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
-        $this->getDataGenerator()->create_grade_category(
+        $grade6 = $this->getDataGenerator()->create_grade_category(
                 array('courseid' => $course6mod3->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
-
+/*
         // Creating grades.
         $grade1 = $this->getDataGenerator()->create_grade_item(array(
             'itemtype' => 'course', 'courseid' => $course1mod1->id, 'category' => $category1->id));
@@ -1417,7 +1417,7 @@ class local_eudest_testcase extends advanced_testcase {
             'itemtype' => 'course', 'courseid' => $course5mod3->id, 'category' => $category1->id));
         $grade6 = $this->getDataGenerator()->create_grade_item(array(
             'itemtype' => 'course', 'courseid' => $course6mod3->id, 'category' => $category1->id));
-
+*/
         $grades1 = new stdClass();
         $grades1->itemid = $grade1->id;
         $grades1->finalgrade = 78;
@@ -1465,7 +1465,7 @@ class local_eudest_testcase extends advanced_testcase {
         // Setting the initial CFG parameter to allow convalidations.
         $CFG->local_eudest_convalidations = 1;
         
-        $items = $DB->get_records('grade_items', array('itemtype' => 'course', 'itemname' => NULL));
+        $items = $DB->get_records('grade_items', array('itemtype' => 'course'));
         var_dump($items);
         $grades = $DB->get_records('grade_grades', array());
         var_dump($grades);
