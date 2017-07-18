@@ -1357,7 +1357,7 @@ class local_eudest_testcase extends advanced_testcase {
         $record7->intensive = 0;
         $record7->masterid = 0;
         $DB->insert_record('local_eudest_enrols', $record7);
-
+/*
         // Creating grade_categories for the courses.
         $this->getDataGenerator()->create_grade_category(
                 array('courseid' => $course1mod1->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
@@ -1367,7 +1367,7 @@ class local_eudest_testcase extends advanced_testcase {
                 array('courseid' => $course3mod1->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
         $this->getDataGenerator()->create_grade_category(
                 array('courseid' => $course4mod2->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
-
+*/
         // Creating grades.
         $grade1 = $this->getDataGenerator()->create_grade_item(array(
             'itemtype' => 'course', 'courseid' => $course1mod1->id, 'category' => $category1->id));
