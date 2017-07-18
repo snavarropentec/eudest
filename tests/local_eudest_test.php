@@ -1495,7 +1495,7 @@ class local_eudest_testcase extends advanced_testcase {
 
         $newgrades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(8, $newgrades);
-        
+
         // Testing the function with a module not passed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
 
