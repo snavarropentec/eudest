@@ -1244,6 +1244,10 @@ class local_eudest_testcase extends advanced_testcase {
                 array('shortname' => 'CT1.M.CS3[-1-]', 'category' => $category1->id));
         $course4mod2 = $this->getDataGenerator()->create_course(
                 array('shortname' => 'CT1.M.CS4[-2-]', 'category' => $category1->id));
+        $course5mod3 = $this->getDataGenerator()->create_course(
+                array('shortname' => 'CT1.M.CS5[-3-]', 'category' => $category1->id));
+        $course5mod2 = $this->getDataGenerator()->create_course(
+                array('shortname' => 'CT1.M.CS5[-3-]', 'category' => $category1->id));
 
         // Getting the id of the roles.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
@@ -1258,10 +1262,12 @@ class local_eudest_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user1->id, $course3mod1->id, $studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($user1->id, $course4mod2->id, $studentrole->id, 'manual');
 
-        // Enrol user2 in courses 1, 2 and 3 as student, not enrol in course 4.
+        // Enrol user2 in courses 1, 2, 4, 5 and 6 as student, not enrol in course 4.
         $this->getDataGenerator()->enrol_user($user2->id, $course1mod1->id, $studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($user2->id, $course2mod2->id, $studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($user2->id, $course3mod1->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($user2->id, $course5mod3->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($user2->id, $course6mod3->id, $studentrole->id, 'manual');
 
         // Recording initial data in eudest_enrols.
         $record1 = new stdClass();
@@ -1357,6 +1363,32 @@ class local_eudest_testcase extends advanced_testcase {
         $record7->intensive = 0;
         $record7->masterid = 0;
         $DB->insert_record('local_eudest_enrols', $record7);
+        $record8 = new stdClass();
+        $record8->userid = $user2->id;
+        $record8->courseid = $course5mod3->id;
+        $record8->shortname = $course5mod3->shortname;
+        $record8->categoryid = $category1->id;
+        $record8->startdate = $startdate;
+        $record8->enddate = $enddate;
+        $record8->pend_event = 1;
+        $record8->pend_encapsulation = 1;
+        $record8->pend_convalidation = 0;
+        $record8->intensive = 0;
+        $record8->masterid = 0;
+        $DB->insert_record('local_eudest_enrols', $record8);
+        $record9 = new stdClass();
+        $record9->userid = $user2->id;
+        $record9->courseid = $course6mod3->id;
+        $record9->shortname = $course6mod3->shortname;
+        $record9->categoryid = $category1->id;
+        $record9->startdate = $startdate;
+        $record9->enddate = $enddate;
+        $record9->pend_event = 1;
+        $record9->pend_encapsulation = 1;
+        $record9->pend_convalidation = 1;
+        $record9->intensive = 0;
+        $record9->masterid = 0;
+        $DB->insert_record('local_eudest_enrols', $record9);
 
         // Creating grade_categories for the courses.
         $this->getDataGenerator()->create_grade_category(
@@ -1367,6 +1399,10 @@ class local_eudest_testcase extends advanced_testcase {
                 array('courseid' => $course3mod1->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
         $this->getDataGenerator()->create_grade_category(
                 array('courseid' => $course4mod2->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
+        $this->getDataGenerator()->create_grade_category(
+                array('courseid' => $course5mod3->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
+        $this->getDataGenerator()->create_grade_category(
+                array('courseid' => $course6mod3->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
 
         // Creating grades.
         $grade1 = $this->getDataGenerator()->create_grade_item(array(
@@ -1377,6 +1413,10 @@ class local_eudest_testcase extends advanced_testcase {
             'itemtype' => 'course', 'courseid' => $course3mod1->id, 'category' => $category1->id));
         $grade4 = $this->getDataGenerator()->create_grade_item(array(
             'itemtype' => 'course', 'courseid' => $course4mod2->id, 'category' => $category1->id));
+        $grade5 = $this->getDataGenerator()->create_grade_item(array(
+            'itemtype' => 'course', 'courseid' => $course5mod3->id, 'category' => $category1->id));
+        $grade6 = $this->getDataGenerator()->create_grade_item(array(
+            'itemtype' => 'course', 'courseid' => $course6mod3->id, 'category' => $category1->id));
 
         $grades1 = new stdClass();
         $grades1->itemid = $grade1->id;
@@ -1437,6 +1477,15 @@ class local_eudest_testcase extends advanced_testcase {
 
         $newgrades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(7, $newgrades);
+        
+        $grades7 = new stdClass();
+        $grades7->itemid = $grade5->id;
+        $grades7->finalgrade = 29;
+        $grades7->userid = $user2->id;
+        $DB->insert_record('grade_grades', $grades7, false);
+        
+        $lastgrades = $DB->get_records_sql($sqlgrade, array());
+        $this->assertCount(8, $lastgrades);
     }
 
     /**
