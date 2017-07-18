@@ -1465,7 +1465,7 @@ class local_eudest_testcase extends advanced_testcase {
         // Setting the initial CFG parameter to allow convalidations.
         $CFG->local_eudest_convalidations = 1;
         
-        $items = $DB->get_records('grade_items');
+        $items = $DB->get_records('grade_items', array('itemtype' => 'course', 'itemname' => NULL));
         var_dump($items);
         
         // Testing the function when convalidation is allowed.

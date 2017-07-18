@@ -1031,39 +1031,36 @@ class local_eudest {
         $enrols = $DB->get_records('local_eudest_enrols', array('intensive' => 0, 'pend_convalidation' => 1));
         foreach ($enrols as $enrol) {
             // Check if the user has already a grade.
-            $records = $DB->get_records('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid));
-            foreach ($records as $record) {
-                // If he doesn't have a grade we search the recognizables courses and get the maximum grade.
-                if (!$DB->record_exists('grade_grades', array('itemid' => $record->id, 'userid' => $enrol->userid))) {
-                    // Check if user has enrolments in recognized modules.
-                    $cod = substr($enrol->shortname, strrpos($enrol->shortname, "["), strlen($enrol->shortname));
-                    $sql = "SELECT *
-                              FROM {local_eudest_enrols}
-                              WHERE shortname LIKE '%$cod'
-                                AND courseid != :courseid
-                                AND userid = :userid;
-                            ";
-                    $recognizedcourses = $DB->get_records_sql($sql, array('courseid' => $enrol->courseid, 'userid' => $enrol->userid));
-                    // If he has enrolments in other modules we get the maximum grtade and update the new course grade.
-                    if ($recognizedcourses) {
-                        $maxgrade = 0;
-                        foreach ($recognizedcourses as $recognizedcourse) {
-                            $items = $DB->get_records('grade_items',
-                                    array('itemtype' => 'course', 'courseid' => $recognizedcourse->courseid));
-                            foreach ($items as $coursegradeitem) {
-                                $coursegradegrade = $DB->get_record('grade_grades',
-                                    array('itemid' => $coursegradeitem->id, 'userid' => $enrol->userid));
-                            }
-                            if (($coursegradegrade->finalgrade / $coursegradegrade->rawgrademax) > $maxgrade) {
-                                $maxgrade = $coursegradegrade->finalgrade / $coursegradegrade->rawgrademax;
-                            }
+            $records = $DB->get_record('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid, 'itemname' => NULL));
+            // If he doesn't have a grade we search the recognizables courses and get the maximum grade.
+            if (!$DB->record_exists('grade_grades', array('itemid' => $record->id, 'userid' => $enrol->userid))) {
+                // Check if user has enrolments in recognized modules.
+                $cod = substr($enrol->shortname, strrpos($enrol->shortname, "["), strlen($enrol->shortname));
+                $sql = "SELECT *
+                          FROM {local_eudest_enrols}
+                         WHERE shortname LIKE '%$cod'
+                           AND courseid != :courseid
+                           AND userid = :userid;
+                       ";
+                $recognizedcourses = $DB->get_records_sql($sql, array('courseid' => $enrol->courseid, 'userid' => $enrol->userid));
+                // If he has enrolments in other modules we get the maximum grtade and update the new course grade.
+                if ($recognizedcourses) {
+                    $maxgrade = 0;
+                    foreach ($recognizedcourses as $recognizedcourse) {
+                        $coursegradeitem = $DB->get_record('grade_items',
+                                array('itemtype' => 'course', 'courseid' => $recognizedcourse->courseid, 
+                                    'itemname' => NULL));
+                        $coursegradegrade = $DB->get_record('grade_grades',
+                                array('itemid' => $coursegradeitem->id, 'userid' => $enrol->userid));
+                        if (($coursegradegrade->finalgrade / $coursegradegrade->rawgrademax) > $maxgrade) {
+                            $maxgrade = $coursegradegrade->finalgrade / $coursegradegrade->rawgrademax;
                         }
-                        // If he passed any of the recognizable modules he cna validate the new module.
-                        if ($maxgrade > 0.5) {
-                            $maxgrade = $maxgrade * $record->grademax;
-                            // Update grade value.
-                            $this->eude_update_course_grade($record->id, $enrol->courseid, $enrol->userid, $maxgrade, "convalidation");
-                        }
+                    }
+                    // If he passed any of the recognizable modules he cna validate the new module.
+                    if ($maxgrade > 0.5) {
+                        $maxgrade = $maxgrade * $record->grademax;
+                        // Update grade value.
+                        $this->eude_update_course_grade($record->id, $enrol->courseid, $enrol->userid, $maxgrade, "convalidation");
                     }
                 }
             }
