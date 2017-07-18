@@ -1247,7 +1247,7 @@ class local_eudest_testcase extends advanced_testcase {
         $course5mod3 = $this->getDataGenerator()->create_course(
                 array('shortname' => 'CT1.M.CS5[-3-]', 'category' => $category1->id));
         $course5mod2 = $this->getDataGenerator()->create_course(
-                array('shortname' => 'CT1.M.CS5[-3-]', 'category' => $category1->id));
+                array('shortname' => 'CT1.M.CS6[-3-]', 'category' => $category1->id));
 
         // Getting the id of the roles.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
@@ -1464,7 +1464,10 @@ class local_eudest_testcase extends advanced_testcase {
 
         // Setting the initial CFG parameter to allow convalidations.
         $CFG->local_eudest_convalidations = 1;
-
+        
+        $items = $DB->get_records('grade_items');
+        var_dump($items);
+        
         // Testing the function when convalidation is allowed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
 
@@ -1474,7 +1477,7 @@ class local_eudest_testcase extends advanced_testcase {
         $this->assertEquals(0, $expected[$identif + 1]->pend_convalidation);
         $this->assertEquals(0, $expected[$identif + 2]->pend_convalidation);
         $this->assertEquals(0, $expected[$identif + 4]->pend_convalidation);
-
+        
         $newgrades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(7, $newgrades);
         
@@ -1483,6 +1486,9 @@ class local_eudest_testcase extends advanced_testcase {
         $grades7->finalgrade = 29;
         $grades7->userid = $user2->id;
         $DB->insert_record('grade_grades', $grades7, false);
+        
+        // Testing the function with a module not passed.
+        $this->invoke_method($instance1, 'eude_convalidate_modules', array());
         
         $lastgrades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(8, $lastgrades);
