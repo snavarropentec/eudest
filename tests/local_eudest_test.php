@@ -1405,18 +1405,30 @@ class local_eudest_testcase extends advanced_testcase {
                 array('courseid' => $course6mod3->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
 
         // Creating grades.
-        $grade1 = $this->getDataGenerator()->create_grade_item(array(
+        $this->getDataGenerator()->create_grade_item(array(
             'itemtype' => 'course', 'courseid' => $course1mod1->id, 'category' => $category1->id));
-        $grade2 = $this->getDataGenerator()->create_grade_item(array(
+        $this->getDataGenerator()->create_grade_item(array(
             'itemtype' => 'course', 'courseid' => $course2mod2->id, 'category' => $category1->id));
-        $grade3 = $this->getDataGenerator()->create_grade_item(array(
+        $this->getDataGenerator()->create_grade_item(array(
             'itemtype' => 'course', 'courseid' => $course3mod1->id, 'category' => $category1->id));
-        $grade4 = $this->getDataGenerator()->create_grade_item(array(
+        $this->getDataGenerator()->create_grade_item(array(
             'itemtype' => 'course', 'courseid' => $course4mod2->id, 'category' => $category1->id));
-        $grade5 = $this->getDataGenerator()->create_grade_item(array(
+        $this->getDataGenerator()->create_grade_item(array(
             'itemtype' => 'course', 'courseid' => $course5mod3->id, 'category' => $category1->id));
-        $grade6 = $this->getDataGenerator()->create_grade_item(array(
+        $this->getDataGenerator()->create_grade_item(array(
             'itemtype' => 'course', 'courseid' => $course6mod3->id, 'category' => $category1->id));
+        
+        $sql_items = "SELECT *
+                            FROM {grade_items}
+                           WHERE itemtype = :type
+                             AND courseid = :courseid
+                             AND iteminstance IS NOT NULL";
+        $grade1 = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $course1mod1->id));
+        $grade2 = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $course2mod2->id));
+        $grade3 = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $course3mod1->id));
+        $grade4 = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $course4mod2->id));
+        $grade5 = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $course5mod3->id));
+        $grade6 = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $course6mod3->id));
 
         $grades1 = new stdClass();
         $grades1->itemid = $grade1->id;
