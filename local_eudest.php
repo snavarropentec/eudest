@@ -1048,10 +1048,12 @@ class local_eudest {
                     if ($recognizedcourses) {
                         $maxgrade = 0;
                         foreach ($recognizedcourses as $recognizedcourse) {
-                            $coursegradeitem = $DB->get_record('grade_items',
+                            $items = $DB->get_records('grade_items',
                                     array('itemtype' => 'course', 'courseid' => $recognizedcourse->courseid));
-                            $coursegradegrade = $DB->get_record('grade_grades',
+                            foreach ($items as $coursegradeitem) {
+                                $coursegradegrade = $DB->get_record('grade_grades',
                                     array('itemid' => $coursegradeitem->id, 'userid' => $enrol->userid));
+                            }
                             if (($coursegradegrade->finalgrade / $coursegradegrade->rawgrademax) > $maxgrade) {
                                 $maxgrade = $coursegradegrade->finalgrade / $coursegradegrade->rawgrademax;
                             }
