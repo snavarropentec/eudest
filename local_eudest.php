@@ -1045,12 +1045,13 @@ class local_eudest {
                                     AND gi.courseid != :courseid
                                ORDER BY gg.finalgrade desc
                                LIMIT 1";
-                    $grades = $DB->get_record_sql($sqlgrade, array('userid' => $enrol->userid, 'courseid' => $enrol->courseid));
-                    $maxgrade = $grades->finalgrade;
-                    // Update grade value.
-                    echo "Convalida ".$grades->courseid." con la nota del curso ".$record->courseid." : ".$grades->finalgrade."  -----  ";
-                    $this->eude_update_course_grade($grades->itemid, $grades->courseid, $grades->userid, $maxgrade, "convalidation");
-
+                    $grades = $DB->get_records_sql($sqlgrade, array('userid' => $enrol->userid, 'courseid' => $enrol->courseid));
+                    foreach ($grades as $grade) {
+                        $maxgrade = $grade->finalgrade;
+                        // Update grade value.
+                        echo "Convalida ".$record->courseid." con la nota del curso ".$grade->courseid." : ".$grade->finalgrade."  -----  ";
+                        $this->eude_update_course_grade($grade->itemid, $grade->courseid, $grade->userid, $maxgrade, "convalidation");
+                    }
                 $enrol->pend_convalidation = 0;
                 $DB->update_record('local_eudest_enrols', $enrol);
             }
