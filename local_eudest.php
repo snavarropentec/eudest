@@ -1026,6 +1026,8 @@ class local_eudest {
         if (!$doconvalidations) {
             return 0;
         }
+        $this->eude_update_course_grade(315002, 195001, 198000, 50, "convalidation");
+        /*
         $enrols = $DB->get_records('local_eudest_enrols', array('intensive' => 0, 'pend_convalidation' => 1));
         foreach ($enrols as $enrol) {
             $records = $DB->get_records('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid));
@@ -1053,7 +1055,7 @@ class local_eudest {
                 $enrol->pend_convalidation = 0;
                 $DB->update_record('local_eudest_enrols', $enrol);
             }
-        }
+        }*/
     }
 
     /**
