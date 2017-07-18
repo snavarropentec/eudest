@@ -1467,7 +1467,9 @@ class local_eudest_testcase extends advanced_testcase {
         
         $items = $DB->get_records('grade_items', array('itemtype' => 'course', 'itemname' => NULL));
         var_dump($items);
-        
+        $grades = $DB->get_records('grade_grades', array());
+        var_dump($grades);
+                
         // Testing the function when convalidation is allowed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
 
