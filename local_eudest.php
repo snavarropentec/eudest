@@ -1054,21 +1054,16 @@ class local_eudest {
                     $maxgrade = 0;
                     foreach ($recognizedcourses as $recognizedcourse) {
                         $coursegradeitem = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $recognizedcourse->courseid));
-                            
-                        /*$coursegradeitem = $DB->get_record('grade_items',
-                                array('itemtype' => 'course', 'courseid' => $recognizedcourse->courseid));*/
                         if ($coursegradegrade = $DB->get_record('grade_grades',
                                 array('itemid' => $coursegradeitem->id, 'userid' => $enrol->userid))) {;
-                        if (($coursegradegrade->finalgrade / $coursegradegrade->rawgrademax) > $maxgrade) {
-                            $maxgrade = $coursegradegrade->finalgrade / $coursegradegrade->rawgrademax;
-                        }
-
+                            if (($coursegradegrade->finalgrade / $coursegradegrade->rawgrademax) > $maxgrade) {
+                                $maxgrade = $coursegradegrade->finalgrade / $coursegradegrade->rawgrademax;
+                            }
                         }
                     }
                     // If he passed any of the recognizable modules he cna validate the new module.
                     if ($maxgrade > 0.5) {
                         $maxgrade = $maxgrade * $record->grademax;
-                        
                         // Update grade value.
                         $this->eude_update_course_grade($record->id, $enrol->courseid, $enrol->userid, $maxgrade, "convalidation");
                     }

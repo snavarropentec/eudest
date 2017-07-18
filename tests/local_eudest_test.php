@@ -1453,6 +1453,12 @@ class local_eudest_testcase extends advanced_testcase {
         $grades6->finalgrade = 65;
         $grades6->userid = $user2->id;
         $DB->insert_record('grade_grades', $grades6, false);
+        
+        $grades7 = new stdClass();
+        $grades7->itemid = $grade5->id;
+        $grades7->finalgrade = 29;
+        $grades7->userid = $user2->id;
+        $DB->insert_record('grade_grades', $grades7, false);
 
         $sqlgrade = "SELECT gg.id, gg.itemid, gi.courseid, c.shortname, gg.userid, gi.grademax, gg.finalgrade
                        FROM {grade_items} gi
@@ -1472,16 +1478,11 @@ class local_eudest_testcase extends advanced_testcase {
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
 
         $othergrades = $DB->get_records_sql($sqlgrade, array());
-        $this->assertCount(4, $othergrades);
+        $this->assertCount(5, $othergrades);
 
         // Setting the initial CFG parameter to allow convalidations.
         $CFG->local_eudest_convalidations = 1;
-        
-        $items = $DB->get_records('grade_items', array('itemtype' => 'course'));
-        var_dump($items);
-        $grades = $DB->get_records('grade_grades', array());
-        var_dump($grades);
-                
+
         // Testing the function when convalidation is allowed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
 
@@ -1493,15 +1494,8 @@ class local_eudest_testcase extends advanced_testcase {
         $this->assertEquals(0, $expected[$identif + 4]->pend_convalidation);
         
         $newgrades = $DB->get_records_sql($sqlgrade, array());
-        var_dump($newgrades);
-        $this->assertCount(7, $newgrades);
-        
-        $grades7 = new stdClass();
-        $grades7->itemid = $grade5->id;
-        $grades7->finalgrade = 29;
-        $grades7->userid = $user2->id;
-        $DB->insert_record('grade_grades', $grades7, false);
-        
+        $this->assertCount(8, $newgrades);
+                
         // Testing the function with a module not passed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
         
