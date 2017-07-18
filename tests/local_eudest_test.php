@@ -1246,7 +1246,7 @@ class local_eudest_testcase extends advanced_testcase {
                 array('shortname' => 'CT1.M.CS4[-2-]', 'category' => $category1->id));
         $course5mod3 = $this->getDataGenerator()->create_course(
                 array('shortname' => 'CT1.M.CS5[-3-]', 'category' => $category1->id));
-        $course5mod2 = $this->getDataGenerator()->create_course(
+        $course6mod3 = $this->getDataGenerator()->create_course(
                 array('shortname' => 'CT1.M.CS6[-3-]', 'category' => $category1->id));
 
         // Getting the id of the roles.
@@ -1489,6 +1489,9 @@ class local_eudest_testcase extends advanced_testcase {
         
         // Testing the function with a module not passed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
+        
+        $newexpected = $DB->get_records('local_eudest_enrols');
+        $this->assertEquals(0, $newexpected[$identif + 8]->pend_convalidation);
         
         $lastgrades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(8, $lastgrades);
