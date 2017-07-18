@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/gradelib.php');
 /**
  * Schedule task for doin EUDE processes.
  *
- * @copyright  2016 Planificación Entornos Tecnológicos {@link http://www.pentec.es/}
+ * @copyright  2016 PlanificaciÃ³n Entornos TecnolÃ³gicos {@link http://www.pentec.es/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_eudest {
@@ -1030,13 +1030,7 @@ class local_eudest {
         foreach ($enrols as $enrol) {
             $records = $DB->get_records('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid));
             foreach ($records as $record) {
-                if ($DB->get_records('grade_grades', array('itemid' => $record->id, 'userid' => $enrol->userid))) {
-                    $finalgrade = $DB->get_records('grade_grades', array('itemid' => $record->itemid, 'userid' => $enrol->userid));
-                } else {
-                    $finalgrade = null;
-                }
-
-                if ($finalgrade === null) {
+                
                     // Check if user has enrolments in convalitable modules.
                     $cod = substr($enrol->shortname, strrpos($enrol->shortname, "["), strlen($enrol->shortname));
 
@@ -1054,8 +1048,9 @@ class local_eudest {
                     $grades = $DB->get_record_sql($sqlgrade, array('userid' => $enrol->userid, 'courseid' => $enrol->courseid));
                     $maxgrade = $grades->finalgrade;
                     // Update grade value.
-                    $this->eude_update_course_grade($record->id, $enrol->courseid, $grades->userid, $maxgrade, "convalidation");
-                }
+                    echo "Convalida ".$enrol->shortname." (".$enrol->courseid.") con la nota del curso ".$record->courseid." : ".$record->finalgrade."  -----  ";
+                    //$this->eude_update_course_grade($record->id, $enrol->courseid, $grades->userid, $maxgrade, "convalidation");
+
                 $enrol->pend_convalidation = 0;
                 $DB->update_record('local_eudest_enrols', $enrol);
             }
