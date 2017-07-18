@@ -1029,10 +1029,11 @@ class local_eudest {
         
         $enrols = $DB->get_records('local_eudest_enrols', array('intensive' => 0, 'pend_convalidation' => 1));
         foreach ($enrols as $enrol) {
-            $this->eude_update_course_grade($record->id, $enrol->courseid, $enrol->userid, 90, "convalidation");
-            /*$records = $DB->get_records('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid));
+            
+            $records = $DB->get_records('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid));
             foreach ($records as $record) {
-                
+                $this->eude_update_course_grade($record->id, $enrol->courseid, $enrol->userid, 90, "convalidation");
+                /*
                     // Check if user has enrolments in convalitable modules.
                     $cod = substr($enrol->shortname, strrpos($enrol->shortname, "["), strlen($enrol->shortname));
 
@@ -1054,8 +1055,8 @@ class local_eudest {
                     //echo "Convalida ".$enrol->shortname." (".$record->courseid.") con la nota del curso ".$grades->courseid." : ".$grades->finalgrade." (".$grades->itemid.")"."  para el usuario ".$grades->userid."-----  ";
                     //$this->eude_update_course_grade($record->id, $enrol->courseid, $grades->userid, $grades->finalgrade, $info);
                 $enrol->pend_convalidation = 0;
-                $DB->update_record('local_eudest_enrols', $enrol);
-            }*/
+                $DB->update_record('local_eudest_enrols', $enrol);*/
+            }
         }
     }
 
