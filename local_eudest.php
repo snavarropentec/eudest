@@ -1036,8 +1036,8 @@ class local_eudest {
                            WHERE itemtype = :type
                              AND courseid = :courseid
                              AND iteminstance IS NOT NULL";
-            $records = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $enrol->courseid));
-            //$records = $DB->get_record_sql('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid, 'itemname' => NULL));
+            $record = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $enrol->courseid));
+            //$record = $DB->get_record_sql('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid, 'itemname' => NULL));
             // If he doesn't have a grade we search the recognizables courses and get the maximum grade.
             if (!$DB->record_exists('grade_grades', array('itemid' => $record->id, 'userid' => $enrol->userid))) {
                 // Check if user has enrolments in recognized modules.
