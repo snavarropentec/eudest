@@ -1428,7 +1428,6 @@ class local_eudest_testcase extends advanced_testcase {
         $grade3 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course3mod1->id));
         $grade4 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course4mod2->id));
         $grade5 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course5mod3->id));
-        $grade6 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course6mod3->id));
 
         $grades1 = new stdClass();
         $grades1->itemid = $grade1->id;
@@ -1543,7 +1542,7 @@ class local_eudest_testcase extends advanced_testcase {
         $category2 = $this->getDataGenerator()->create_category(array('name' => 'Category 2'));
 
         $course1 = $this->getDataGenerator()->create_course(array('shortname' => 'Course 1', 'category' => $category1->id));
-        $course2 = $this->getDataGenerator()->create_course(array('shortname' => 'MI.Course 1', 'category' => $category2->id));
+        $this->getDataGenerator()->create_course(array('shortname' => 'MI.Course 1', 'category' => $category2->id));
 
         $manualinstance = self::create_manual_instance($course1->id);
         $manualplugin->enrol_user($manualinstance, $user1->id, $studentrole->id, $today - (10 * $month), $today - (5 * $month));
@@ -1977,8 +1976,6 @@ class local_eudest_testcase extends advanced_testcase {
 
         $this->invoke_method($instance1, 'eude_send_scheduled_messages', array());
 
-        $test = $DB->get_records('local_eudest_msgs', array());
-
         // Test Sended messages after use the function.
         $messages5 = $DB->get_records('local_eudest_msgs', array());
         $this->assertCount(0, $messages5);
@@ -2060,7 +2057,7 @@ class local_eudest_testcase extends advanced_testcase {
         $this->set_protected($instance1, 'eudeconfig', $eudeconf);
 
         // Creating a new type of role.
-        $roleid = $this->getDataGenerator()->create_role(array('shortname' => 'studentval'));
+        $this->getDataGenerator()->create_role(array('shortname' => 'studentval'));
 
         // Creating user.
         $user1 = $this->getDataGenerator()->create_user(array('username' => 'usuario 1', 'email' => 'user1@php.com'));
@@ -2080,10 +2077,10 @@ class local_eudest_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id, $studentrole->id, 'manual');
 
         // Creating quizs.
-        $quiz1 = $this->getDataGenerator()->create_module('quiz', array('course' => $course1->id));
-        $quiz2 = $this->getDataGenerator()->create_module('quiz', array('course' => $course2->id));
-        $quiz3 = $this->getDataGenerator()->create_module('quiz', array('course' => $course3->id));
-        $quiz4 = $this->getDataGenerator()->create_module('quiz', array('course' => $course4->id));
+        $this->getDataGenerator()->create_module('quiz', array('course' => $course1->id));
+        $this->getDataGenerator()->create_module('quiz', array('course' => $course2->id));
+        $this->getDataGenerator()->create_module('quiz', array('course' => $course3->id));
+        $this->getDataGenerator()->create_module('quiz', array('course' => $course4->id));
 
         // Getting grade item id from each quiz.
         $itemid1 = $DB->get_record('grade_items', array('itemtype' => 'course', 'courseid' => $course1->id));
