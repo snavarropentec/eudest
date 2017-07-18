@@ -2079,12 +2079,6 @@ class local_eudest_testcase extends advanced_testcase {
         $studentrole = self::get_student_role();
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id, $studentrole->id, 'manual');
 
-        // Creating grade_categories for the courses.
-        $this->getDataGenerator()->create_grade_category(
-                array('courseid' => $course1->id, 'fullname' => 'Grade Category', 'aggregation' => '13'));
-        $this->getDataGenerator()->create_grade_category(
-                array('courseid' => $course2->id, 'fullname' => 'Grade Category Intensives', 'aggregation' => '13'));
-
         // Creating quizs.
         $quiz1 = $this->getDataGenerator()->create_module('quiz', array('course' => $course1->id));
         $quiz2 = $this->getDataGenerator()->create_module('quiz', array('course' => $course2->id));
