@@ -1050,8 +1050,8 @@ class local_eudest {
                     $maxgrade = $grades->finalgrade;
                     $info = "convalidation";
                     // Update grade value.
-                    echo "Convalida ".$enrol->shortname." (".$record->courseid.") con la nota del curso ".$grades->courseid." : ".$grades->finalgrade."  para el usuario ".$grades->userid."-----  ";
-                    $this->eude_update_course_grade($grades->itemid, $grades->courseid, $grades->userid, $grades->finalgrade, $info);
+                    echo "Convalida ".$enrol->shortname." (".$record->courseid.") con la nota del curso ".$grades->courseid." : ".$grades->finalgrade." (".$grades->itemid.")"."  para el usuario ".$grades->userid."-----  ";
+                    //$this->eude_update_course_grade($grades->itemid, $grades->courseid, $grades->userid, $grades->finalgrade, $info);
                 $enrol->pend_convalidation = 0;
                 $DB->update_record('local_eudest_enrols', $enrol);
             }
