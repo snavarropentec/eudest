@@ -1031,7 +1031,13 @@ class local_eudest {
         $enrols = $DB->get_records('local_eudest_enrols', array('intensive' => 0, 'pend_convalidation' => 1));
         foreach ($enrols as $enrol) {
             // Check if the user has already a grade.
-            $records = $DB->get_record('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid, 'itemname' => NULL));
+            $sql_items = "SELECT *
+                            FROM {grade_items}
+                           WHERE itemtype = :type
+                             AND courseid = :courseid
+                             AND iteminstance IS NOT NULL";
+            $records = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $enrol->courseid));
+            //$records = $DB->get_record_sql('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid, 'itemname' => NULL));
             // If he doesn't have a grade we search the recognizables courses and get the maximum grade.
             if (!$DB->record_exists('grade_grades', array('itemid' => $record->id, 'userid' => $enrol->userid))) {
                 // Check if user has enrolments in recognized modules.
@@ -1047,9 +1053,10 @@ class local_eudest {
                 if ($recognizedcourses) {
                     $maxgrade = 0;
                     foreach ($recognizedcourses as $recognizedcourse) {
-                        $coursegradeitem = $DB->get_record('grade_items',
+                        $coursegradeitem = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $recognizedcourse->courseid));
+                        /*$coursegradeitem = $DB->get_record('grade_items',
                                 array('itemtype' => 'course', 'courseid' => $recognizedcourse->courseid, 
-                                    'itemname' => NULL));
+                                    'itemname' => NULL));*/
                         $coursegradegrade = $DB->get_record('grade_grades',
                                 array('itemid' => $coursegradeitem->id, 'userid' => $enrol->userid));
                         if (($coursegradegrade->finalgrade / $coursegradegrade->rawgrademax) > $maxgrade) {
