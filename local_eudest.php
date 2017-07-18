@@ -1051,26 +1051,27 @@ class local_eudest {
                 $recognizedcourses = $DB->get_records_sql($sql, array('courseid' => $enrol->courseid, 'userid' => $enrol->userid));
                 // If he has enrolments in other modules we get the maximum grtade and update the new course grade.
                 if ($recognizedcourses) {
-                    //$maxgrade = 0;
+                    $maxgrade = 0;
                     foreach ($recognizedcourses as $recognizedcourse) {
-                        $coursegradeitem = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $recognizedcourse->courseid));
+                        if($coursegradeitem = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $recognizedcourse->courseid))) {
+                            
                         /*$coursegradeitem = $DB->get_record('grade_items',
-                                array('itemtype' => 'course', 'courseid' => $recognizedcourse->courseid, 
-                                    'itemname' => NULL));*/
-                    /*    $coursegradegrade = $DB->get_record('grade_grades',
+                                array('itemtype' => 'course', 'courseid' => $recognizedcourse->courseid));*/
+                        $coursegradegrade = $DB->get_record('grade_grades',
                                 array('itemid' => $coursegradeitem->id, 'userid' => $enrol->userid));
                         if (($coursegradegrade->finalgrade / $coursegradegrade->rawgrademax) > $maxgrade) {
                             $maxgrade = $coursegradegrade->finalgrade / $coursegradegrade->rawgrademax;
-                        }*/
-                        $maxgrade = $recognizedcourses;
+                        }
+
+                        }
                     }
                     // If he passed any of the recognizable modules he cna validate the new module.
-                    //if ($maxgrade > 0.5) {
-                        //$maxgrade = $maxgrade * $record->grademax;
+                    if ($maxgrade > 0.5) {
+                        $maxgrade = $maxgrade * $record->grademax;
                         
                         // Update grade value.
                         $this->eude_update_course_grade($record->id, $enrol->courseid, $enrol->userid, $maxgrade, "convalidation");
-                    //}
+                    }
                 }
             }
             $enrol->pend_convalidation = 0;
