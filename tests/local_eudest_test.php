@@ -1417,18 +1417,18 @@ class local_eudest_testcase extends advanced_testcase {
             'itemtype' => 'course', 'courseid' => $course5mod3->id, 'category' => $category1->id));
         $this->getDataGenerator()->create_grade_item(array(
             'itemtype' => 'course', 'courseid' => $course6mod3->id, 'category' => $category1->id));
-        
-        $sql_items = "SELECT *
+
+        $sqlitems = "SELECT *
                             FROM {grade_items}
                            WHERE itemtype = :type
                              AND courseid = :courseid
                              AND iteminstance IS NOT NULL";
-        $grade1 = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $course1mod1->id));
-        $grade2 = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $course2mod2->id));
-        $grade3 = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $course3mod1->id));
-        $grade4 = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $course4mod2->id));
-        $grade5 = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $course5mod3->id));
-        $grade6 = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $course6mod3->id));
+        $grade1 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course1mod1->id));
+        $grade2 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course2mod2->id));
+        $grade3 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course3mod1->id));
+        $grade4 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course4mod2->id));
+        $grade5 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course5mod3->id));
+        $grade6 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course6mod3->id));
 
         $grades1 = new stdClass();
         $grades1->itemid = $grade1->id;
@@ -1453,7 +1453,7 @@ class local_eudest_testcase extends advanced_testcase {
         $grades6->finalgrade = 65;
         $grades6->userid = $user2->id;
         $DB->insert_record('grade_grades', $grades6, false);
-        
+
         $grades7 = new stdClass();
         $grades7->itemid = $grade5->id;
         $grades7->finalgrade = 29;
@@ -1492,16 +1492,16 @@ class local_eudest_testcase extends advanced_testcase {
         $this->assertEquals(0, $expected[$identif + 1]->pend_convalidation);
         $this->assertEquals(0, $expected[$identif + 2]->pend_convalidation);
         $this->assertEquals(0, $expected[$identif + 4]->pend_convalidation);
-        
+
         $newgrades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(8, $newgrades);
-                
+        
         // Testing the function with a module not passed.
         $this->invoke_method($instance1, 'eude_convalidate_modules', array());
-        
+
         $newexpected = $DB->get_records('local_eudest_enrols');
         $this->assertEquals(0, $newexpected[$identif + 8]->pend_convalidation);
-        
+
         $lastgrades = $DB->get_records_sql($sqlgrade, array());
         $this->assertCount(8, $lastgrades);
     }
