@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/gradelib.php');
 /**
  * Schedule task for doin EUDE processes.
  *
- * @copyright  2016 Planificación Entornos Tecnológicos {@link http://www.pentec.es/}
+ * @copyright  2016 Planificaci�n Entornos Tecnol�gicos {@link http://www.pentec.es/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_eudest {
@@ -1026,37 +1026,45 @@ class local_eudest {
         if (!$doconvalidations) {
             return 0;
         }
-        
+
+        // Get enrols pending of recognize modules.
         $enrols = $DB->get_records('local_eudest_enrols', array('intensive' => 0, 'pend_convalidation' => 1));
         foreach ($enrols as $enrol) {
-            
-            $records = $DB->get_records('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid));
-            foreach ($records as $record) {
-                $this->eude_update_course_grade($record->id, $enrol->courseid, $enrol->userid, 90, "convalidation");
-                /*
-                    // Check if user has enrolments in convalitable modules.
-                    $cod = substr($enrol->shortname, strrpos($enrol->shortname, "["), strlen($enrol->shortname));
-
-                    $sqlgrade = "SELECT gg.id, gi.id itemid, gi.courseid, gg.userid, gi.grademax, gg.finalgrade, gg.information
-                                   FROM {grade_items} gi
-                                   JOIN {grade_grades} gg on gg.itemid = gi.id
-                                   JOIN {course} c on gi.courseid = c.id
-                                  WHERE gi.itemtype = 'course'
-                                    AND c.shortname like CONCAT('%', '$cod')
-                                    AND gg.finalgrade is not null
-                                    AND gg.userid = :userid
-                                    AND gi.courseid != :courseid
-                               ORDER BY gg.finalgrade desc
-                               LIMIT 1";
-                    $grades = $DB->get_record_sql($sqlgrade, array('userid' => $enrol->userid, 'courseid' => $enrol->courseid));
-                    $maxgrade = $grades->finalgrade;
-                    $info = "convalidation";
-                    // Update grade value.
-                    //echo "Convalida ".$enrol->shortname." (".$record->courseid.") con la nota del curso ".$grades->courseid." : ".$grades->finalgrade." (".$grades->itemid.")"."  para el usuario ".$grades->userid."-----  ";
-                    //$this->eude_update_course_grade($record->id, $enrol->courseid, $grades->userid, $grades->finalgrade, $info);
-                $enrol->pend_convalidation = 0;
-                $DB->update_record('local_eudest_enrols', $enrol);*/
+            // Check if the user has already a grade.
+            $record = $DB->get_record('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid));
+            // If he doesn't have a grade we search the recognizables courses and get the maximum grade.
+            if (!$DB->record_exists('grade_grades', array('itemid' => $record->id, 'userid' => $enrol->userid))) {
+                // Check if user has enrolments in recognized modules.
+                $cod = substr($enrol->shortname, strrpos($enrol->shortname, "["), strlen($enrol->shortname));
+                $sql = "SELECT *
+                          FROM {local_eudest_enrols}
+                          WHERE shortname LIKE '%$cod'
+                            AND courseid != :courseid
+                            AND userid = :userid;
+                        ";
+                $recognizedcourses = $DB->get_records_sql($sql, array('courseid' => $enrol->courseid, 'userid' => $enrol->userid));
+                // If he has enrolments in other modules we get the maximum grtade and update the new course grade.
+                if ($recognizedcourses) {
+                    $maxgrade = 0;
+                    foreach ($recognizedcourses as $recognizedcourse) {
+                        $coursegradeitem = $DB->get_record('grade_items',
+                                array('itemtype' => 'course', 'courseid' => $recognizedcourse->courseid));
+                        $coursegradegrade = $DB->get_record('grade_grades',
+                                array('itemid' => $coursegradeitem->id, 'userid' => $enrol->userid));
+                        if (($coursegradegrade->finalgrade / $coursegradegrade->rawgrademax) > $maxgrade) {
+                            $maxgrade = $coursegradegrade->finalgrade / $coursegradegrade->rawgrademax;
+                        }
+                    }
+                    // If he passed any of the recognizable modules he cna validate the new module.
+                    if ($maxgrade > 0.5) {
+                        $maxgrade = $maxgrade * $record->grademax;
+                        // Update grade value.
+                        $this->eude_update_course_grade($record->id, $enrol->courseid, $enrol->userid, $maxgrade, "convalidation");
+                    }
+                }
             }
+            $enrol->pend_convalidation = 0;
+            $DB->update_record('local_eudest_enrols', $enrol);
         }
     }
 
