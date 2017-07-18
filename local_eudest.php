@@ -1035,7 +1035,8 @@ class local_eudest {
                             FROM {grade_items}
                            WHERE itemtype = :type
                              AND courseid = :courseid
-                             AND iteminstance IS NULL";
+                        ORDER BY id DESC
+                           LIMIT 1";
             $record = $DB->get_record_sql($sql_items, array('type' => 'course', 'courseid' => $enrol->courseid));
             //$record = $DB->get_record_sql('grade_items', array('itemtype' => 'course', 'courseid' => $enrol->courseid, 'itemname' => NULL));
             // If he doesn't have a grade we search the recognizables courses and get the maximum grade.
