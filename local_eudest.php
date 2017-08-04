@@ -178,6 +178,7 @@ class local_eudest {
 
         // Update configuration.
         $this->eude_save_configuration();
+
     }
 
     /**
@@ -194,7 +195,6 @@ class local_eudest {
             $record->last_califications_date = 0;
         }
         $this->eudeconfig = $record;
-        $this->eudeconfig->last_enrolid_for_intensives_msgs = $this->eudeconfig->last_enrolid;
     }
 
     /**
@@ -279,6 +279,7 @@ class local_eudest {
         $record->pend_encapsulation = $pdteencapsulation;
         $record->pend_convalidation = $pdteconvalidation;
         $record->intensive = $intensive;
+        $record->pend_int_messages = $intensive;
         $record->masterid = 0;
 
         $DB->insert_record('local_eudest_enrols', $record, false);
@@ -548,10 +549,11 @@ class local_eudest {
      * @param int $msgdate Date for sending the message.
      * @return int Id of the inserted message
      */
-    private function eude_add_message_to_stack ($categoryid, $to, $target, $msgtype, $msgdate) {
+    private function eude_add_message_to_stack ($categoryid, $shortname, $to, $target, $msgtype, $msgdate) {
         global $DB;
         $record = new stdClass();
         $record->categoryid = (int) $categoryid;
+        $record->shortname = $shortname;
         $record->msgto = $to;
         $record->msgtarget = $target;
         $record->msgtype = $msgtype;
@@ -665,26 +667,37 @@ class local_eudest {
             $DB->update_record('local_eudest_masters', $master);
         }
 
-        $today = strtotime(date('Y-m-d', time('00:00')));
-
         /*
          * As the intensive courses are in a single category we have to generate the messages without encapsulating them.
          */
-        $sql = 'SELECT lee.*
-                  FROM {local_eudest_enrols} lee
-                 WHERE lee.intensive = 1
-                   AND lee.id > :lastenrolid';
-        $intensivecourserecords = $DB->get_records_sql($sql,
-                array('lastenrolid' => $this->eudeconfig->last_enrolid_for_intensives_msgs));
-        $intensivetag = $this->intensivetag;
-        // We recover the intensive module category.
-        $sql = "SELECT DISTINCT c.category
-                  FROM {course} c
-                 WHERE c.shortname LIKE CONCAT('$intensivetag', '.%')";
-        $intensivecoursecategory = $DB->get_record_sql($sql, array());
+        $intensivecourserecords = [];
+        try {
+            $sql = "SELECT lee.*
+                      FROM {local_eudest_enrols} lee
+                     WHERE lee.intensive = 1
+                       AND lee.pend_int_messages = 1";
+            $intensivecourserecords = $DB->get_records_sql($sql, array());
+            $intensivetag = $this->intensivetag;
+            // We recover the intensive module category.
+            $sql = "SELECT DISTINCT c.category
+                      FROM {course} c
+                     WHERE c.shortname LIKE CONCAT('$intensivetag', '.%')
+                  ORDER BY c.category ASC
+                     LIMIT 1";
+            $intensivecoursecategory = $DB->get_record_sql($sql, array());
 
-        // We get the responsable master for the intensive courses categories.
-        $rmintensive = $this->eude_get_rm($intensivecoursecategory->category);
+            // We get the responsable master for the intensive courses categories.
+            $rmintensive = $this->eude_get_rm($intensivecoursecategory->category);
+
+            foreach ($intensivecourserecords as $record) {
+                // Update column 'pend_int_messages'.
+                $record->pend_int_messages = 0;
+                $DB->update_record('local_eudest_enrols', $record);
+            }
+        } catch (Exception $e) {
+        }
+
+        $today = strtotime(date('Y-m-d', time('00:00')));
 
         // Add messages to stack (one message to RM by each enrolled in master).
         if ($noticermonnewuser) {
@@ -694,12 +707,12 @@ class local_eudest {
                     continue;
                 }
                 $target = implode(",", $nodecategory->users);
-                $this->eude_add_message_to_stack($nodecategory->categoryid, $rm, $target, $this->msgtypenewstudent, $today);
+                $this->eude_add_message_to_stack($nodecategory->categoryid, null, $rm, $target, $this->msgtypenewstudent, $today);
             }
             if ($rmintensive) {
                 foreach ($intensivecourserecords as $record) {
-                    $this->eude_add_message_to_stack($intensivecoursecategory->category, $rmintensive, $record->userid,
-                            $this->msgtypenewstudent, $today);
+                    $this->eude_add_message_to_stack($intensivecoursecategory->category, $record->shortname, $rmintensive,
+                            $record->userid, $this->msgtypenewstudent, $today);
                 }
             }
         }
@@ -710,12 +723,12 @@ class local_eudest {
                 $to = implode(",", $nodecategory->users);
                 $tend = strtotime('+1 day', $nodecategory->enddate);
                 $tend = strtotime(date($this->dateformat, $tend));
-                $this->eude_add_message_to_stack($nodecategory->categoryid, $to, null, $this->msgtypestfinishmaster, $tend);
+                $this->eude_add_message_to_stack($nodecategory->categoryid, null, $to, null, $this->msgtypestfinishmaster, $tend);
             }
             foreach ($intensivecourserecords as $record) {
                 $tend = strtotime('+1 day', $record->enddate);
                 $tend = strtotime(date($this->dateformat, $tend));
-                $this->eude_add_message_to_stack($intensivecoursecategory->category, $record->userid, null,
+                $this->eude_add_message_to_stack($intensivecoursecategory->category, null, $record->userid, null,
                         $this->msgtypestfinishmaster, $tend);
             }
         }
@@ -735,7 +748,7 @@ class local_eudest {
                     continue;
                 }
                 // Add message to stack.
-                $this->eude_add_message_to_stack($nodecategory->categoryid, $rm, date($this->dateformat2, $nodecategory->startdate),
+                $this->eude_add_message_to_stack($nodecategory->categoryid, null, $rm, date($this->dateformat2, $nodecategory->startdate),
                         $this->msgtypermfinishmaster, $tend);
             }
             if ($rmintensive) {
@@ -746,9 +759,16 @@ class local_eudest {
                     $tend = strtotime('+1 day', $record->enddate);
                     $tend = strtotime(date($this->dateformat, $tend));
 
+                    // Check if record exists.
+                    $exists = $this->eude_find_message_in_stack($record->categoryid, $rmintensive,
+                        date($this->dateformat2, $record->startdate), $this->msgtypermfinishmaster, $tend);
+                    if ($exists) {
+                        continue;
+                    }
+                    
                     // Add message to stack.
-                    $this->eude_add_message_to_stack($record->categoryid, $rmintensive,
-                            date($this->dateformat2, $record->startdate), $this->msgtypermfinishmaster, $tend);
+                    $this->eude_add_message_to_stack($record->categoryid, null, $rmintensive,
+                        date($this->dateformat2, $record->startdate), $this->msgtypermfinishmaster, $tend);
                 }
             }
         }
@@ -831,7 +851,8 @@ class local_eudest {
             foreach ($records as $record) {
                 $rm = $this->eude_get_rm($record->categoryid);
                 // Add message to stack.
-                $this->eude_add_message_to_stack($record->categoryid, $rm, $record->userid, $this->msgtyperminactivity6, $today);
+                $this->eude_add_message_to_stack($record->categoryid, null, $rm, $record->userid, $this->msgtyperminactivity6,
+                        $today);
                 // Update inactivity in master.
                 $record->inactivity6 = 1;
                 $DB->update_record('local_eudest_masters', $record);
@@ -871,7 +892,7 @@ class local_eudest {
 
                 $rm = $this->eude_get_rm($record->categoryid);
                 // Add message to stack.
-                $this->eude_add_message_to_stack($record->categoryid, $rm, $record->userid, $msgtype, $today);
+                $this->eude_add_message_to_stack($record->categoryid, null, $rm, $record->userid, $msgtype, $today);
 
                 // Update inactivity in master.
                 unset($record->num_months);
@@ -886,7 +907,8 @@ class local_eudest {
                     }
                     // Notice user.
                     if ($noticeuseroninactivity24) {
-                        $this->eude_add_message_to_stack($record->categoryid, $record->userid, "", $this->msgtypeuserlocked, $today);
+                        $this->eude_add_message_to_stack($record->categoryid, null, $record->userid, "",
+                                $this->msgtypeuserlocked, $today);
                     }
                 }
             }
@@ -939,61 +961,57 @@ class local_eudest {
             $lastcheck = $record->timemodified;
             $userid = $record->userid;
             $shortname = str_replace("$this->intensivetag", "", $record->shortname);
-            $sql2 = "SELECT gi.id itemid, gi.courseid, gi.grademax, gg.id gradeid, gg.userid, gg.finalgrade, gg.information
-                      FROM {grade_grades} gg
-                 JOIN {grade_items} gi ON gg.itemid = gi.id
-                 JOIN {course} gc ON gi.courseid = gc.id
-                     WHERE gi.itemtype = 'course'
-                       AND gg.userid = :userid
-                       AND shortname LIKE CONCAT('%.M', CONCAT('$shortname', '%'))";
-            $modules = $DB->get_records_sql($sql2, array("userid" => $userid));
 
             $actualcalification = 0;
             $information = "";
-            if ($modules) {
-                foreach ($modules as $module) {
-                    $actualcalification = $module->finalgrade;
-                    $information = $module->information;
 
-                    if ($information == null || $information == "") {
-                        $information = new lang_string('normal_grade', $this->pluginname) .
-                                ": " . number_format($actualcalification, 2, '.', '') . "/ "
-                                . number_format($module->grademax, 2, '.', '') . ".";
-                    }
-                    $information = new lang_string('intensive_grade', $this->pluginname) .
-                            " (" . date("d/m/y, H:i:s", $record->timemodified) . "): " .
-                            number_format($newcalification, 2, '.', '') . "/ "
-                            . number_format($module->grademax, 2, '.', '') . ". " . $information;
-                    // Update total course grade.
-                    if ($newcalification > $actualcalification) {
-                        $this->eude_update_course_grade($module->itemid, $module->courseid, $userid, $newcalification, $information);
-                    }
-                }
-            } else {
-                $sql = "SELECT c.id
-                          FROM {course} c
-                         WHERE c.shortname LIKE CONCAT('%.M', CONCAT('$shortname', '%'))";
-                $modules2 = $DB->get_records_sql($sql, array());
-
-                foreach ($modules2 as $module) {
-                    $sql = "SELECT gi.id, gi.grademax
+            /* If the user has a grade in an intensive course and didn't have a grade in the normal course
+             * related to that intensive grade.
+             */
+            // Recover all the normal courses related to the intensive course where the user is enroled.
+            $sql = "SELECT c.courseid
+                          FROM {local_eudest_enrols} c
+                         WHERE c.shortname LIKE CONCAT('%.M', CONCAT('$shortname', '%'))
+                           AND c.userid = :userid";
+            $modules = $DB->get_records_sql($sql, array('userid' => $userid));
+            // Recover the grade_item of each normal course and register a new entry for the user in grade_grades.
+            foreach ($modules as $module) {
+                $sql = "SELECT gi.*
                           FROM {grade_items} gi
-                         WHERE gi.courseid = :courseid";
-                    $gradeitems = $DB->get_records_sql($sql, array('courseid' => $module->id));
+                         WHERE gi.courseid = :courseid
+                           AND gi.itemtype = 'course'";
+                $gradeitem = $DB->get_record_sql($sql, array('courseid' => $module->courseid));
+                // If the user already has a record of a grade in that course.
+                if ($DB->record_exists('grade_grades', array('itemid' => $gradeitem->id, 'userid' => $userid))) {
+                    $actualgradeinfo = $DB->get_record('grade_grades', array('itemid' => $gradeitem->id, 'userid' => $userid));
+                    if ($newcalification > $actualgradeinfo->finalgrade) {
+                        $actualgradeinfo->finalgrade = $newcalification;
+                        $information = $actualgradeinfo->information;
 
-                    foreach ($gradeitems as $gradeitem) {
+                        if ($information == null || $information == "") {
+                            $information = new lang_string('normal_grade', $this->pluginname) .
+                                    ": " . number_format($actualgradeinfo->finalgrade, 2, '.', '') . "/ "
+                                    . number_format($actualgradeinfo->rawgrademax, 2, '.', '') . ".";
+                        }
                         $information = new lang_string('intensive_grade', $this->pluginname) .
                                 " (" . date("d/m/y, H:i:s", $record->timemodified) . "): " .
                                 number_format($newcalification, 2, '.', '') . "/ "
-                                . number_format($gradeitem->grademax, 2, '.', '') . ". ";
-                        $this->eude_update_course_grade($gradeitem->id, $module->id, $userid, $newcalification, $information);
+                                . number_format($actualgradeinfo->rawgrademax, 2, '.', '') . ". " . $information;
+                        // Update total course grade.
+                        $this->eude_update_course_grade($gradeitem->id, $module->courseid, $userid, $newcalification, $information);
                     }
-
-                    $studentvaldata = $DB->get_record('role', array('shortname' => 'studentval'));
-                    $studentdata = $DB->get_record('role', array('shortname' => 'student'));
-                    $coursecontextdata = context_course::instance($module->courseid);
-                    role_assign($studentvaldata->id, $record->userid, $coursecontextdata->id);
+                } else {
+                    $information = new lang_string('intensive_grade', $this->pluginname)
+                            . " (" . date("d/m/y, H:i:s", $record->timemodified) . "): "
+                            . number_format($newcalification, 2, '.', '') . "/ "
+                            . number_format($gradeitem->grademax, 2, '.', '') . ". ";
+                    $this->eude_update_course_grade($gradeitem->id, $module->courseid, $userid,
+                            $newcalification, $information);
                 }
+                // We add a new role for the user in the course with different capabilities.
+                $studentvaldata = $DB->get_record('role', array('shortname' => 'studentval'));
+                $coursecontextdata = context_course::instance($module->courseid);
+                role_assign($studentvaldata->id, $userid, $coursecontextdata->id);
             }
         }
         // Update check date.
@@ -1037,21 +1055,21 @@ class local_eudest {
                              AND iteminstance IS NOT NULL";
             $record = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $enrol->courseid));
             // If he doesn't have a grade we search the recognizables courses and get the maximum grade.
-            if (!$DB->record_exists('grade_grades', array('itemid' => $record->id, 'userid' => $enrol->userid))) {
+            if ($record && !$DB->record_exists('grade_grades', array('itemid' => $record->id, 'userid' => $enrol->userid))) {
                 // Check if user has enrolments in recognized modules.
                 $cod = substr($enrol->shortname, strrpos($enrol->shortname, "["), strlen($enrol->shortname));
                 $sql = "SELECT *
                           FROM {local_eudest_enrols}
                          WHERE shortname LIKE '%$cod'
                            AND courseid != :courseid
-                           AND userid = :userid;
-                       ";
+                           AND userid = :userid";
                 $recognizedcourses = $DB->get_records_sql($sql, array('courseid' => $enrol->courseid, 'userid' => $enrol->userid));
                 // If he has enrolments in other modules we get the maximum grtade and update the new course grade.
                 if ($recognizedcourses) {
                     $maxgrade = 0;
                     foreach ($recognizedcourses as $recognizedcourse) {
-                        $coursegradeitem = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $recognizedcourse->courseid));
+                        $coursegradeitem = $DB->get_record_sql($sqlitems,
+                                array('type' => 'course', 'courseid' => $recognizedcourse->courseid));
                         if ($coursegradegrade = $DB->get_record('grade_grades',
                                 array('itemid' => $coursegradeitem->id, 'userid' => $enrol->userid))) {
                             if (($coursegradegrade->finalgrade / $coursegradegrade->rawgrademax) > $maxgrade) {
@@ -1111,6 +1129,7 @@ class local_eudest {
                     $category = $this->get_category($categoryid);
                     $subject = new lang_string('rmenrolnotice_subject', $this->pluginname, $category->name);
                     $to = $this->get_user($record->msgto);
+                    $incourse = $record->shortname;
                     $messagetext = $msgnewstudent;
                     $userstext = "";
                     if (strrpos($messagetext, $this->userflag)) {
@@ -1130,6 +1149,9 @@ class local_eudest {
                             }
                         }
                         $messagetext = str_replace($this->userflag, $userstext, $messagetext);
+                    }
+                    if ($incourse != null) {
+                        $messagetext = "[" . $incourse . "]." . $messagetext;
                     }
                     $messagetext = $category->name . ". " . $messagetext;
                     $this->send_message($from, $to, $subject, $messagetext);

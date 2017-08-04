@@ -106,7 +106,6 @@ class local_eudest_revert {
      * @param int $timestart Time start to find the records
      */
     private function eude_revert_user($categoryid, $userid, $timestart) {
-        global $DB;
         // Delete events of user master.
         $this->eude_revert_delete_events($userid, $timestart, "[[COURSE]]");
 

@@ -1428,6 +1428,7 @@ class local_eudest_testcase extends advanced_testcase {
         $grade3 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course3mod1->id));
         $grade4 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course4mod2->id));
         $grade5 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course5mod3->id));
+        $grade6 = $DB->get_record_sql($sqlitems, array('type' => 'course', 'courseid' => $course6mod3->id));
 
         $grades1 = new stdClass();
         $grades1->itemid = $grade1->id;
@@ -1542,7 +1543,7 @@ class local_eudest_testcase extends advanced_testcase {
         $category2 = $this->getDataGenerator()->create_category(array('name' => 'Category 2'));
 
         $course1 = $this->getDataGenerator()->create_course(array('shortname' => 'Course 1', 'category' => $category1->id));
-        $this->getDataGenerator()->create_course(array('shortname' => 'MI.Course 1', 'category' => $category2->id));
+        $course2 = $this->getDataGenerator()->create_course(array('shortname' => 'MI.Course 1', 'category' => $category2->id));
 
         $manualinstance = self::create_manual_instance($course1->id);
         $manualplugin->enrol_user($manualinstance, $user1->id, $studentrole->id, $today - (10 * $month), $today - (5 * $month));
@@ -1976,6 +1977,8 @@ class local_eudest_testcase extends advanced_testcase {
 
         $this->invoke_method($instance1, 'eude_send_scheduled_messages', array());
 
+        $test = $DB->get_records('local_eudest_msgs', array());
+
         // Test Sended messages after use the function.
         $messages5 = $DB->get_records('local_eudest_msgs', array());
         $this->assertCount(0, $messages5);
@@ -2057,7 +2060,7 @@ class local_eudest_testcase extends advanced_testcase {
         $this->set_protected($instance1, 'eudeconfig', $eudeconf);
 
         // Creating a new type of role.
-        $this->getDataGenerator()->create_role(array('shortname' => 'studentval'));
+        $roleid = $this->getDataGenerator()->create_role(array('shortname' => 'studentval'));
 
         // Creating user.
         $user1 = $this->getDataGenerator()->create_user(array('username' => 'usuario 1', 'email' => 'user1@php.com'));
@@ -2075,12 +2078,15 @@ class local_eudest_testcase extends advanced_testcase {
         // Enrol user in course.
         $studentrole = self::get_student_role();
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($user1->id, $course3->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($user1->id, $course4->id, $studentrole->id, 'manual');
 
         // Creating quizs.
-        $this->getDataGenerator()->create_module('quiz', array('course' => $course1->id));
-        $this->getDataGenerator()->create_module('quiz', array('course' => $course2->id));
-        $this->getDataGenerator()->create_module('quiz', array('course' => $course3->id));
-        $this->getDataGenerator()->create_module('quiz', array('course' => $course4->id));
+        $quiz1 = $this->getDataGenerator()->create_module('quiz', array('course' => $course1->id));
+        $quiz2 = $this->getDataGenerator()->create_module('quiz', array('course' => $course2->id));
+        $quiz3 = $this->getDataGenerator()->create_module('quiz', array('course' => $course3->id));
+        $quiz4 = $this->getDataGenerator()->create_module('quiz', array('course' => $course4->id));
 
         // Getting grade item id from each quiz.
         $itemid1 = $DB->get_record('grade_items', array('itemtype' => 'course', 'courseid' => $course1->id));
@@ -2143,6 +2149,60 @@ class local_eudest_testcase extends advanced_testcase {
 
         $inserttest = $DB->get_record('grade_grades', array('userid' => $user1->id, 'itemid' => $itemid4->id));
         $this->assertEquals($inserttest->finalgrade, '70.00000');
+
+        // We insert new entries in table local_eudest_enrols to recover the enrols relevant to the function.
+        $eudestenrol1 = new stdClass();
+        $eudestenrol1->userid = $user1->id;
+        $eudestenrol1->courseid = $course1->id;
+        $eudestenrol1->shortname = $course1->shortname;
+        $eudestenrol1->categoryid = $category1->id;
+        $eudestenrol1->startdate = time() - 4000;
+        $eudestenrol1->enddate = time() + 4000;
+        $eudestenrol1->pend_event = 0;
+        $eudestenrol1->pend_encapsulation = 0;
+        $eudestenrol1->pend_convalidation = 0;
+        $eudestenrol1->intensive = 0;
+        $eudestenrol1->masterid = 0;
+        $DB->insert_record('local_eudest_enrols', $eudestenrol1);
+        $eudestenrol2 = new stdClass();
+        $eudestenrol2->userid = $user1->id;
+        $eudestenrol2->courseid = $course2->id;
+        $eudestenrol2->shortname = $course2->shortname;
+        $eudestenrol2->categoryid = $category2->id;
+        $eudestenrol2->startdate = time() - 4000;
+        $eudestenrol2->enddate = time() + 4000;
+        $eudestenrol2->pend_event = 0;
+        $eudestenrol2->pend_encapsulation = 0;
+        $eudestenrol2->pend_convalidation = 0;
+        $eudestenrol2->intensive = 1;
+        $eudestenrol2->masterid = 0;
+        $DB->insert_record('local_eudest_enrols', $eudestenrol2);
+        $eudestenrol3 = new stdClass();
+        $eudestenrol3->userid = $user1->id;
+        $eudestenrol3->courseid = $course3->id;
+        $eudestenrol3->shortname = $course3->shortname;
+        $eudestenrol3->categoryid = $category2->id;
+        $eudestenrol3->startdate = time() - 4000;
+        $eudestenrol3->enddate = time() + 4000;
+        $eudestenrol3->pend_event = 0;
+        $eudestenrol3->pend_encapsulation = 0;
+        $eudestenrol3->pend_convalidation = 0;
+        $eudestenrol3->intensive = 0;
+        $eudestenrol3->masterid = 0;
+        $DB->insert_record('local_eudest_enrols', $eudestenrol3);
+        $eudestenrol4 = new stdClass();
+        $eudestenrol4->userid = $user1->id;
+        $eudestenrol4->courseid = $course4->id;
+        $eudestenrol4->shortname = $course4->shortname;
+        $eudestenrol4->categoryid = $category2->id;
+        $eudestenrol4->startdate = time() - 4000;
+        $eudestenrol4->enddate = time() + 4000;
+        $eudestenrol4->pend_event = 0;
+        $eudestenrol4->pend_encapsulation = 0;
+        $eudestenrol4->pend_convalidation = 0;
+        $eudestenrol4->intensive = 1;
+        $eudestenrol4->masterid = 0;
+        $DB->insert_record('local_eudest_enrols', $eudestenrol4);
 
         $this->invoke_method($instance1, 'eude_override_califications');
 
