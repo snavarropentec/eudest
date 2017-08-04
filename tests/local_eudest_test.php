@@ -315,6 +315,7 @@ class local_eudest_testcase extends advanced_testcase {
         $expected->pend_convalidation = $pdteconv;
         $expected->intensive = $intensive;
         $expected->masterid = 0;
+        $expected->pend_int_messages = 0;
 
         $this->assertEquals($expected->userid, $result->userid);
         $this->assertEquals($expected->courseid, $result->courseid);
@@ -359,6 +360,7 @@ class local_eudest_testcase extends advanced_testcase {
         $expected2->pend_convalidation = $pdteconv;
         $expected2->intensive = $intensive;
         $expected2->masterid = 0;
+        $expected2->pend_int_messages = 0;
 
         $this->assertEquals($expected2->userid, $result2->userid);
         $this->assertEquals($expected2->courseid, $result2->courseid);
@@ -469,6 +471,7 @@ class local_eudest_testcase extends advanced_testcase {
         $enrol1->pend_convalidation = $pdteconv;
         $enrol1->intensive = $intensive;
         $enrol1->masterid = 0;
+        $enrol1->pend_int_messages = 0;
 
         $enrol2 = new stdClass();
         $enrol2->userid = $user1->id;
@@ -482,6 +485,7 @@ class local_eudest_testcase extends advanced_testcase {
         $enrol2->pend_convalidation = $pdteconv;
         $enrol2->intensive = $intensive;
         $enrol2->masterid = 0;
+        $enrol2->pend_int_messages = 0;
 
         $enrol1id = $DB->get_record('local_eudest_enrols', array('courseid' => $course3->id));
         $enrol2id = $DB->get_record('local_eudest_enrols', array('courseid' => $course4->id));
