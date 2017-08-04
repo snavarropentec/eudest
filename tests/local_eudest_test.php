@@ -1141,17 +1141,17 @@ class local_eudest_testcase extends advanced_testcase {
 
         // Testing the function with the initial settings.
         $this->invoke_method($instance1, 'eude_add_message_to_stack', array(
-            $category1->id, $category1->name, 'to1', 'target1', 'type1', $startdate));
+            $category1->id, null, 'to1', 'target1', 'type1', $startdate));
         $this->invoke_method($instance1, 'eude_add_message_to_stack', array(
-            $category2->id, $category2->name, 'to1', 'target1', 'type1', $startdate));
+            $category2->id, null, 'to1', 'target1', 'type1', $startdate));
         $this->invoke_method($instance1, 'eude_add_message_to_stack', array(
-            $category3->id, $category3->name, 'to1', 'target1', 'type1', $startdate));
+            $category3->id, null, 'to1', 'target1', 'type1', $startdate));
         $this->invoke_method($instance1, 'eude_add_message_to_stack', array(
-            $category1->id, $category1->name, 'to1', 'target1', 'type2', $startdate));
+            $category1->id, null, 'to1', 'target1', 'type2', $startdate));
         $this->invoke_method($instance1, 'eude_add_message_to_stack', array(
-            $category1->id, $category1->name, 'to1', 'target2', 'type2', $startdate));
+            $category1->id, null, 'to1', 'target2', 'type2', $startdate));
         $this->invoke_method($instance1, 'eude_add_message_to_stack', array(
-            $category1->id, $category1->name, 'to2', 'target1', 'type2', $startdate));
+            $category1->id, null, 'to2', 'target1', 'type2', $startdate));
 
         // Checking asserts.
         $expectedresult = $DB->get_records('local_eudest_msgs');

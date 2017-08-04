@@ -543,6 +543,7 @@ class local_eudest {
     /**
      * Add a message to the stack of messages
      * @param int $categoryid Id of the category
+     * @param string $shortname Shortname of the course
      * @param string $to Ids of the users targets of the message
      * @param string $target Information to include inside the body of the message
      * @param string $msgtype Type of the message
@@ -695,7 +696,7 @@ class local_eudest {
                 $DB->update_record('local_eudest_enrols', $record);
             }
         } catch (Exception $e) {
-            echo $e;
+            return $e;
         }
 
         $today = strtotime(date('Y-m-d', time('00:00')));
