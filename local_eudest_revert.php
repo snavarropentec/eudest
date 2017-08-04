@@ -241,6 +241,7 @@ class local_eudest_revert {
             }
             $enrol->intensive = $intensive;
             $enrol->masterid = 0;
+            $enrol->pend_int_messages = 0;
             $DB->insert_record('local_eudest_enrols', $enrol, false);
         }
     }
