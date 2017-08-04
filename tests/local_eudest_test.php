@@ -2203,7 +2203,7 @@ class local_eudest_testcase extends advanced_testcase {
         $eudestenrol1->pend_convalidation = 0;
         $eudestenrol1->intensive = 0;
         $eudestenrol1->masterid = 0;
-        $recordenrol1->pend_int_messages = 0;
+        $eudestenrol1->pend_int_messages = 0;
         $DB->insert_record('local_eudest_enrols', $eudestenrol1);
         $eudestenrol2 = new stdClass();
         $eudestenrol2->userid = $user1->id;
@@ -2217,7 +2217,7 @@ class local_eudest_testcase extends advanced_testcase {
         $eudestenrol2->pend_convalidation = 0;
         $eudestenrol2->intensive = 1;
         $eudestenrol2->masterid = 0;
-        $recordenrol2->pend_int_messages = 0;
+        $eudestenrol2->pend_int_messages = 0;
         $DB->insert_record('local_eudest_enrols', $eudestenrol2);
         $eudestenrol3 = new stdClass();
         $eudestenrol3->userid = $user1->id;
@@ -2231,7 +2231,7 @@ class local_eudest_testcase extends advanced_testcase {
         $eudestenrol3->pend_convalidation = 0;
         $eudestenrol3->intensive = 0;
         $eudestenrol3->masterid = 0;
-        $recordenrol3->pend_int_messages = 0;
+        $eudestenrol3->pend_int_messages = 0;
         $DB->insert_record('local_eudest_enrols', $eudestenrol3);
         $eudestenrol4 = new stdClass();
         $eudestenrol4->userid = $user1->id;
@@ -2245,7 +2245,7 @@ class local_eudest_testcase extends advanced_testcase {
         $eudestenrol4->pend_convalidation = 0;
         $eudestenrol4->intensive = 1;
         $eudestenrol4->masterid = 0;
-        $recordenrol4->pend_int_messages = 0;
+        $eudestenrol4->pend_int_messages = 0;
         $DB->insert_record('local_eudest_enrols', $eudestenrol4);
 
         $this->invoke_method($instance1, 'eude_override_califications');

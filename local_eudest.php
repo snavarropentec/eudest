@@ -695,6 +695,7 @@ class local_eudest {
                 $DB->update_record('local_eudest_enrols', $record);
             }
         } catch (Exception $e) {
+            echo $e;
         }
 
         $today = strtotime(date('Y-m-d', time('00:00')));
@@ -748,8 +749,8 @@ class local_eudest {
                     continue;
                 }
                 // Add message to stack.
-                $this->eude_add_message_to_stack($nodecategory->categoryid, null, $rm, date($this->dateformat2, $nodecategory->startdate),
-                        $this->msgtypermfinishmaster, $tend);
+                $this->eude_add_message_to_stack($nodecategory->categoryid, null, $rm,
+                        date($this->dateformat2, $nodecategory->startdate), $this->msgtypermfinishmaster, $tend);
             }
             if ($rmintensive) {
                 foreach ($intensivecourserecords as $record) {
@@ -765,7 +766,7 @@ class local_eudest {
                     if ($exists) {
                         continue;
                     }
-                    
+
                     // Add message to stack.
                     $this->eude_add_message_to_stack($record->categoryid, null, $rmintensive,
                         date($this->dateformat2, $record->startdate), $this->msgtypermfinishmaster, $tend);
